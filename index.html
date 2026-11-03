@@ -260,11 +260,11 @@ slab(.93,1.2,.9,M(0x84c46a));  // grass
 /* ---------- 배치: 십자 모양 대신 섬 곳곳에 흩어진 건물과 구불구불한 길 ---------- */
 const HX=-4,HZ=-3;// 광주 서구청(가운데에서 살짝 서쪽)
 // x, z, 건물 앞쪽 방향, 앞쪽 길이 닿는 거리
-const LAYOUT={bapsang:[5,-1,-1.75,6.6],safety:[-21,-4,1.25,5.4],store:[23,3,-1.9,5.4],family:[-12,8,2.46,5.4],bell:[14,-8,-.75,5.4],bus:[33,-19,-.869,5.8]};
+const LAYOUT={bapsang:[5,-3,.25,6.6],safety:[-21,-4,1.25,5.4],store:[23,3,-1.9,5.4],family:[-12,8,2.46,5.4],bell:[14,-8,-.75,5.4],bus:[33,-19,-.869,5.8]};
 const ZONES=PROJECTS.map(p=>{const [x,z,ry,reach]=LAYOUT[p.key],fx=Math.sin(ry),fz=Math.cos(ry);return {x,z,ry,fx,fz,ex:x+fx*reach,ez:z+fz*reach,p};});
 const PN={br0:[20.4,-8.3],hub:[HX,HZ+3.6],w1:[-9.5,1.4],w2:[-13.4,-.6],e1:[2.2,3.4],e2:[8.6,4.4],e3:[13.6,3.4],b1:[9.6,.2]};
 ZONES.forEach(z=>PN[z.p.key]=[z.ex,z.ez]);
-const EDGES=[["hub","bapsang"],["hub","w1"],["w1","w2"],["w2","safety"],["w1","family"],["hub","family"],["hub","e1"],["e1","e2"],["e2","e3"],["e3","store"],["e2","b1"],["b1","bell"],["e3","br0"]];
+const EDGES=[["hub","w1"],["w1","w2"],["w2","safety"],["w1","family"],["hub","family"],["hub","e1"],["e1","bapsang"],["bapsang","e2"],["e2","e3"],["e3","store"],["e2","b1"],["b1","bell"],["e3","br0"]];
 const PATH_PTS=[],NODES=[],nodeOf={};
 function addNode(x,z){NODES.push({x,z,n:[]});return NODES.length-1;}
 function link(a,b){NODES[a].n.push(b);NODES[b].n.push(a);}
