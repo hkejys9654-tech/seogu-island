@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="서구청 직원이 만든 생활 도구 6곳 — 서구밥상, 여성안전지도, 함께가게, 함께가정, 우리 동네 비상벨 찾기, 서구청 출근버스 위치조회">
+<meta name="description" content="서구청 직원이 만든 생활 도구 9곳 — 서구밥상, 여성안전지도, 함께가게, 함께가정, 우리 동네 비상벨 찾기, 서구청 출근버스 위치조회, 서구:온, 조목조목, 챙겼당께">
 <meta property="og:title" content="서구 아일랜드">
-<meta property="og:description" content="해온이와 함께 둘러보는 서구 생활 도구 6곳. 눌러서 바로 쓰고, 휴대폰에 설치하세요.">
+<meta property="og:description" content="해온이와 함께 둘러보는 서구 생활 도구 9곳. 눌러서 바로 쓰고, 휴대폰에 설치하세요.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#9fd8f2">
 <title>서구 아일랜드</title>
@@ -139,7 +139,7 @@ body.walking .hint{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 74px);whi
 <div class="loading" id="loading"><img alt="" id="loadImg"></div>
 
 <div class="top">
-  <div class="brand"><img alt="" id="brandImg"><div><h1>서구 아일랜드</h1><p>직원이 만든 생활 도구 6곳</p></div></div>
+  <div class="brand"><img alt="" id="brandImg"><div><h1>서구 아일랜드</h1><p>직원이 만든 생활 도구 9곳</p></div></div>
   <button class="tbtn" id="viewBtn" type="button">목록으로 보기</button>
 </div>
 
@@ -216,7 +216,19 @@ const PROJECTS=[
   {key:"bus",no:"06",name:"서구청 출근버스 위치조회",color:"#d97706",pose:"jump",who:"서구청 직원",island:"정미니 아일랜드",by:"펀온워크 팀 정민 개발",
    one:"출근버스가 지금 어디쯤 오는지 지도에서 보고, 내 정류장 도착 시간을 확인해요.",
    chips:["노선별 버스 위치","내 정류장 설정","정류장·시간표"],url:"https://seogubus.web.app/employee",
-   talk:{hi:"정미니 아일랜드에 온 걸 환영해요! 출근버스를 안내하는 버스 해온이예요.",what:"서구청 직원 출근버스가 지금 어디쯤 오는지 지도에서 보여주는 앱이에요. 내 정류장을 정해 두면 언제쯤 오는지 바로 알 수 있어요.",who:"서구청 직원이라면 누구나 써요. 펀온워크 팀 정민 님이 만든 앱이에요."}}
+   talk:{hi:"정미니 아일랜드에 온 걸 환영해요! 출근버스를 안내하는 버스 해온이예요.",what:"서구청 직원 출근버스가 지금 어디쯤 오는지 지도에서 보여주는 앱이에요. 내 정류장을 정해 두면 언제쯤 오는지 바로 알 수 있어요.",who:"서구청 직원이라면 누구나 써요. 펀온워크 팀 정민 님이 만든 앱이에요."}},
+  {key:"seoguon",no:"07",name:"서구:온 디지털트윈",color:"#1e6fd9",pose:"point",who:"서구 주민 누구나",island:"저스티스 아일랜드",by:"의형 개발",
+   one:"공원·주차·생활시설·안전·재난 정보를 3D 디지털트윈 지도에서 서구의 오늘을 한눈에 봐요.",
+   chips:["3D 디지털트윈 지도","돌봄·안심 정보","재난지도·길찾기"],url:"https://seogu-on.vercel.app/",
+   talk:{hi:"저스티스 아일랜드에 온 걸 환영해요! 서구를 3D로 보여주는 트윈 해온이예요.",what:"서구의 오늘을 3D 지도로 한눈에 보여주는 디지털트윈 앱이에요. 공원·주차·생활시설·안전·환경 정보와 재난지도를 함께 볼 수 있어요.",who:"서구 주민 누구나 쓸 수 있어요. 의형 님이 만들었어요."}},
+  {key:"jomok",no:"08",name:"조목조목",color:"#6b4fa0",pose:"thumbs",who:"규정 업무를 맡은 공무원",island:"저스티스 아일랜드",by:"의형 개발",
+   one:"규정 제·개정을 선례 찾기부터 초안, 검토, 다음 할 일까지 AI가 곁에서 함께해요.",
+   chips:["유사 선례 찾기","제·개정 초안 작성","대비표·이유서 한글 파일"],url:"https://jomokjomok.vercel.app/",
+   talk:{hi:"어서 오세요! 규정 업무를 돕는 조목 해온이예요.",what:"처음 맡은 규정 업무도 걱정 없게, 좋은 선례를 찾아 우리 기관 초안을 만들고 검토할 부분과 다음 할 일까지 짚어 주는 AI 행정서비스예요.",who:"조례·규칙·훈령·내규를 만들거나 고치는 공무원이라면 누구나 써요. 의형 님이 만들었어요."}},
+  {key:"chaeng",no:"09",name:"챙겼당께",color:"#db2777",pose:"heart",who:"의회·예산 업무를 맡은 공무원",island:"저스티스 아일랜드",by:"의형 개발",
+   one:"의회 회의록·예산·조례를 함께 찾아, 근거가 담긴 의회 답변자료와 보고전을 만들어요.",
+   chips:["의회 회의록 검색","예산·집행 확인","답변자료·보고전 한글 파일"],url:"https://local-govern.vercel.app/",
+   talk:{hi:"반가워요! 의회 답변 근거를 챙겨 드리는 챙김 해온이예요.",what:"한 줄로 물어보면 여러 해의 회의록·예산·조례를 함께 확인해서, 사업 설명과 예상 답변을 근거와 함께 정리해 주는 AI 서비스예요.",who:"의회·예산·조례 대응 업무를 맡은 공무원이 써요. 의형 님이 만들었어요."}}
 ];
 
 // 처음 열 때 쓰는 기본 기사(매일 아침 news.json 으로 바뀜)
@@ -257,43 +269,59 @@ const foam=slab(1.07,.02,-.55,new THREE.MeshBasicMaterial({color:0xffffff,transp
 slab(1,1.6,.35,M(0xf1dfae));   // sand
 slab(.93,1.2,.9,M(0x84c46a));  // grass
 
+/* ---------- 작은 섬들: 정미니 아일랜드(동북쪽), 저스티스 아일랜드(서구청 뒤 북쪽) ---------- */
+const ISLES=[{x:33,z:-19,r:7.5,s:[1,2]},{x:-7,z:-33,r:11,s:[2.2,.4]}],JC=ISLES[1];
+function Rk(I,a){return I.r*(1+.05*Math.sin(3*a+I.s[0])+.03*Math.sin(5*a+I.s[1]));}
+function rhoI(I,x,z){const dx=x-I.x,dz=z-I.z;return Math.hypot(dx,dz)/Rk(I,Math.atan2(dz,dx));}
+const BRIDGES=[{A:{x:20.4,z:-8.3},B:{x:28.1,z:-14.8},stone:false},{A:{x:-7,z:-13},B:{x:-7,z:JC.z+Rk(JC,Math.PI/2)*.82},stone:true}];
 /* ---------- 배치: 십자 모양 대신 섬 곳곳에 흩어진 건물과 구불구불한 길 ---------- */
 const HX=-4,HZ=-3;// 광주 서구청(가운데에서 살짝 서쪽)
 // x, z, 건물 앞쪽 방향, 앞쪽 길이 닿는 거리
-const LAYOUT={bapsang:[5,-3,.25,6.6],safety:[-21,-4,1.25,5.4],store:[23,3,-1.9,5.4],family:[-12,8,2.46,5.4],bell:[14,-8,-.75,5.4],bus:[33,-19,-.869,5.8]};
+const LAYOUT={bapsang:[5,-3,.25,6.6],safety:[-21,-4,1.25,5.4],store:[23,3,-1.9,5.4],family:[-12,8,2.46,5.4],bell:[14,-8,-.75,5.4],bus:[33,-19,-.869,5.8],
+  seoguon:[JC.x-6.2,JC.z-1.2,1.38,3.4],jomok:[JC.x,JC.z-6.2,0,3.4],chaeng:[JC.x+6.2,JC.z-1.2,-1.38,3.4]};
 const ZONES=PROJECTS.map(p=>{const [x,z,ry,reach]=LAYOUT[p.key],fx=Math.sin(ry),fz=Math.cos(ry);return {x,z,ry,fx,fz,ex:x+fx*reach,ez:z+fz*reach,p};});
-const PN={br0:[20.4,-8.3],hub:[HX,HZ+3.6],w1:[-9.5,1.4],w2:[-13.4,-.6],e1:[2.2,3.4],e2:[8.6,4.4],e3:[13.6,3.4],b1:[9.6,.2]};
+const PN={br0:[20.4,-8.3],jA:[-7,-13],jB:[-7,BRIDGES[1].B.z],jP:[JC.x,JC.z+3.4],hub:[HX,HZ+3.6],w1:[-9.5,1.4],w2:[-13.4,-.6],e1:[2.2,3.4],e2:[8.6,4.4],e3:[13.6,3.4],b1:[9.6,.2]};
 ZONES.forEach(z=>PN[z.p.key]=[z.ex,z.ez]);
-const EDGES=[["hub","w1"],["w1","w2"],["w2","safety"],["w1","family"],["hub","family"],["hub","e1"],["e1","bapsang"],["bapsang","e2"],["e2","e3"],["e3","store"],["e2","b1"],["b1","bell"],["e3","br0"]];
+const EDGES=[["hub","w1"],["w1","w2"],["w2","safety"],["w1","family"],["hub","family"],["hub","e1"],["e1","bapsang"],["bapsang","e2"],["e2","e3"],["e3","store"],["e2","b1"],["b1","bell"],["e3","br0"],["w2","jA",0],
+  ["jB","jP",0],["jP","seoguon",0],["jP","chaeng",0],["seoguon","jomok",0],["jomok","chaeng",0]];
 const PATH_PTS=[],NODES=[],nodeOf={};
 function addNode(x,z){NODES.push({x,z,n:[]});return NODES.length-1;}
 function link(a,b){NODES[a].n.push(b);NODES[b].n.push(a);}
 Object.keys(PN).forEach(k=>nodeOf[k]=addNode(PN[k][0],PN[k][1]));
 const pathMat=M(0xe9dcc0,{side:THREE.DoubleSide});
-EDGES.forEach(([a,b],i)=>{
-  const A=PN[a],Bp=PN[b],dx=Bp[0]-A[0],dz=Bp[1]-A[1],L=Math.hypot(dx,dz),w=((i*37)%5-2)*.09*L;// 길마다 조금씩 휘게
+EDGES.forEach(([a,b,bend],i)=>{
+  const A=PN[a],Bp=PN[b],dx=Bp[0]-A[0],dz=Bp[1]-A[1],L=Math.hypot(dx,dz),w=bend!==undefined?bend*L:((i*37)%5-2)*.09*L;// 길마다 조금씩 휘게
   const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(A[0],0,A[1]),new THREE.Vector3((A[0]+Bp[0])/2-dz/L*w,0,(A[1]+Bp[1])/2+dx/L*w),new THREE.Vector3(Bp[0],0,Bp[1])]);
   const pts=curve.getSpacedPoints(Math.max(4,Math.round(L/.5)));PATH_PTS.push(...pts);
   const pos=[],idx=[];pts.forEach((p,k)=>{const q=pts[Math.min(k+1,pts.length-1)],r=pts[Math.max(k-1,0)],tx=q.x-r.x,tz=q.z-r.z,tl=Math.hypot(tx,tz)||1,nx=-tz/tl*.9,nz=tx/tl*.9;pos.push(p.x+nx,.96,p.z+nz,p.x-nx,.96,p.z-nz);if(k)idx.push(2*k-2,2*k-1,2*k,2*k-1,2*k+1,2*k);});
   const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();scene.add(new THREE.Mesh(g,pathMat));
   let prev=nodeOf[a];for(let k=4;k<pts.length-2;k+=4){const id=addNode(pts[k].x,pts[k].z);link(prev,id);prev=id;}link(prev,nodeOf[b]);});
-{let prev=nodeOf.br0;for(let k=1;k<=4;k++){const id=addNode(20.4+(28.1-20.4)*k/4,-8.3+(-14.8+8.3)*k/4);link(prev,id);prev=id;}link(prev,nodeOf.bus);}// 다리 건너 정미니 아일랜드
+[["br0","bus",0],["jA","jB",1]].forEach(([a,b,k0])=>{const Br=BRIDGES[k0];let prev=nodeOf[a];for(let k=1;k<=4;k++){const id=addNode(Br.A.x+(Br.B.x-Br.A.x)*k/5,Br.A.z+(Br.B.z-Br.A.z)*k/5);link(prev,id);prev=id;}link(prev,nodeOf[b]);});// 다리 건너 작은 섬으로
 ZONES.forEach(z=>NODES[nodeOf[z.p.key]].end=z.ry+Math.PI);// 길 끝에서는 건물을 바라봄
-Object.keys(PN).forEach(k=>{if(k!=="hub"&&k!=="bus")cyl(1,1,.1,0xe9dcc0,PN[k][0],.91,PN[k][1],null,14);});
+Object.keys(PN).forEach(k=>{if(!["hub","bus","seoguon","jomok","chaeng"].includes(k))cyl(1,1,.1,0xe9dcc0,PN[k][0],.91,PN[k][1],null,14);});
 cyl(3.2,3.2,0.14,0xe9dcc0,HX,0.95,HZ,null,20);
 
-/* ---------- 정미니 아일랜드: 동북쪽 바다의 작은 섬 + 나무다리 ---------- */
-const SC={x:33,z:-19},BR_A={x:20.4,z:-8.3},BR_B={x:28.1,z:-14.8};
-function R2(a){return 7.5*(1+.05*Math.sin(3*a+1)+.03*Math.sin(5*a+2));}
-function rho2(x,z){const dx=x-SC.x,dz=z-SC.z;return Math.hypot(dx,dz)/R2(Math.atan2(dz,dx));}
-function blobShape(f){const s=new THREE.Shape();for(let i=0;i<=72;i++){const a=i/72*Math.PI*2,r=R2(a)*f,x=SC.x+Math.cos(a)*r,z=SC.z+Math.sin(a)*r;i?s.lineTo(x,-z):s.moveTo(x,-z);}return s;}
+/* ---------- 작은 섬 땅 + 다리(정미니: 나무다리, 저스티스: 중세 돌다리) ---------- */
+function blobShape(I,f){const s=new THREE.Shape();for(let i=0;i<=72;i++){const a=i/72*Math.PI*2,r=Rk(I,a)*f,x=I.x+Math.cos(a)*r,z=I.z+Math.sin(a)*r;i?s.lineTo(x,-z):s.moveTo(x,-z);}return s;}
 function slabS(shape,depth,top,mat){const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,curveSegments:1});g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.y=top-depth;scene.add(m);return m;}
-slabS(blobShape(1.12),.02,-.55,foam.material);slabS(blobShape(1),1.6,.35,M(0xf1dfae));slabS(blobShape(.9),1.2,.9,M(0x84c46a));
-function bridgeDist(x,z){const ax=BR_B.x-BR_A.x,az=BR_B.z-BR_A.z,L2=ax*ax+az*az,t=clamp(((x-BR_A.x)*ax+(z-BR_A.z)*az)/L2,0,1),px=BR_A.x+ax*t,pz=BR_A.z+az*t;return {d:Math.hypot(x-px,z-pz),t,px,pz};}
-{const dx=BR_B.x-BR_A.x,dz=BR_B.z-BR_A.z,L=Math.hypot(dx,dz)+1.2,br=new THREE.Group();br.position.set((BR_A.x+BR_B.x)/2,0,(BR_A.z+BR_B.z)/2);br.rotation.y=Math.atan2(dx,dz);scene.add(br);
+ISLES.forEach(I=>{slabS(blobShape(I,1.12),.02,-.55,foam.material);slabS(blobShape(I,1),1.6,.35,M(0xf1dfae));slabS(blobShape(I,.9),1.2,.9,M(0x84c46a));});
+// 저스티스 아일랜드 가운데 돌 광장
+cyl(3.4,3.4,.1,0xd8d2c6,JC.x,.9,JC.z,null,24);
+function bridgeDist(Br,x,z){const ax=Br.B.x-Br.A.x,az=Br.B.z-Br.A.z,L2=ax*ax+az*az,t=clamp(((x-Br.A.x)*ax+(z-Br.A.z)*az)/L2,0,1),px=Br.A.x+ax*t,pz=Br.A.z+az*t;return {d:Math.hypot(x-px,z-pz),t,px,pz};}
+function bridgeGroup(Br){const dx=Br.B.x-Br.A.x,dz=Br.B.z-Br.A.z,g=new THREE.Group();g.position.set((Br.A.x+Br.B.x)/2,0,(Br.A.z+Br.B.z)/2);g.rotation.y=Math.atan2(dx,dz);scene.add(g);return [g,Math.hypot(dx,dz)];}
+function woodBridge(Br){const [br,len]=bridgeGroup(Br),L=len+1.2;
   box(1.8,.14,L,0xb08350,0,.93,0,br);for(let k=-L/2+.3;k<L/2;k+=.6)box(1.82,.03,.08,0x8a6440,0,1.01,k,br);
   [-.92,.92].forEach(x=>{box(.08,.08,L,0x8a6440,x,1.5,0,br);for(let k=-L/2+.2;k<=L/2;k+=1.5)box(.1,.6,.1,0x8a6440,x,1.2,k,br);});
   for(let k=-L/2+2;k<L/2-1;k+=3)[-.7,.7].forEach(x=>cyl(.12,.12,1.6,0x7a5536,x,.1,k,br,6));}
+function stoneBridge(Br){const [g,len]=bridgeGroup(Br),L=len+1.6,W=2.3,n=Math.max(2,Math.floor(L/3.4)),span=L/n,r=Math.min(span*.36,.85),yb=-.75,yc=-.3,STONE=0xb9b2a5;
+  // 옆에서 본 모양(아치가 뚫린 돌다리)을 폭만큼 밀어서 만듦
+  const s=new THREE.Shape();s.moveTo(-L/2,.94);s.lineTo(L/2,.94);s.lineTo(L/2,yb);
+  for(let k=n-1;k>=0;k--){const zc=-L/2+span*(k+.5);s.lineTo(zc+r,yb);s.lineTo(zc+r,yc);s.absarc(zc,yc,r,0,Math.PI,false);s.lineTo(zc-r,yb);}
+  s.lineTo(-L/2,yb);const geo=new THREE.ExtrudeGeometry(s,{depth:W,bevelEnabled:false,curveSegments:10});geo.rotateY(Math.PI/2);geo.translate(-W/2,0,0);g.add(new THREE.Mesh(geo,M(STONE)));
+  box(W-.5,.06,L,0x9e978b,0,.97,0,g);
+  [-1,1].forEach(sd=>{const x=sd*(W/2-.15);box(.3,.42,L,0xa9a295,x,1.15,0,g);for(let k=-L/2+.3;k<L/2;k+=.9)box(.32,.26,.42,0xa9a295,x,1.49,k,g);
+    [-L/2+.35,L/2-.35].forEach(zz=>{box(.7,2.1,.7,0xa29b8e,sd*(W/2+.2),1.05,zz,g);roof(1,.8,1,0x7a6f62,sd*(W/2+.2),2.5,zz,g);});});}
+BRIDGES.forEach(Br=>Br.stone?stoneBridge(Br):woodBridge(Br));
 
 /* ---------- center: 광주 서구청 + news banners + Haeon ---------- */
 const hall=new THREE.Group();hall.position.set(HX,0,HZ);scene.add(hall);
@@ -452,9 +480,45 @@ function zoneBus(g){
   bus.position.y=.06;g.add(bus);g.userData.bus=bus;g.userData.busA=0;
   person(-2.6,5.2,g,0xffffff);person(-2,5.25,g,0x3b5b8c);
 }
+/* ---------- 저스티스 아일랜드: 정의의 저울 + 입구 표지판 ---------- */
+{const g=new THREE.Group();g.position.set(JC.x,.9,JC.z);scene.add(g);const GOLD=0xd4a72c;
+  box(1.3,.5,1.3,0xcfc8bb,0,.25,0,g);box(.9,.9,.9,0xe9e4da,0,.95,0,g);cyl(.07,.07,1.7,GOLD,0,2.25,0,g,8);
+  const beam=new THREE.Group();beam.position.set(0,3.05,0);g.add(beam);box(2.2,.1,.1,GOLD,0,0,0,beam);
+  [-1,1].forEach(sd=>{box(.02,.7,.02,GOLD,sd*1.05,-.35,0,beam);const pan=new THREE.Mesh(new THREE.CylinderGeometry(.34,.24,.1,14),M(GOLD));pan.position.set(sd*1.05,-.72,0);beam.add(pan);});
+  const top=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),M(GOLD));top.position.y=3.2;g.add(top);g.userData.beam=beam;JC.statue=g;
+  const jTex=canvasTex(448,96,(x,w,h)=>{x.fillStyle="#e9e4da";x.fillRect(0,0,w,h);x.strokeStyle="#8a8174";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#4a443c";x.font='bold 42px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("저스티스 아일랜드",w/2,h/2+3);});
+  const sx=1.6,sz=BRIDGES[1].B.z-JC.z-.6;box(.16,1.1,.16,0x9e978b,sx,.55,sz,g);box(1.65,.44,.1,0x9e978b,sx,1.05,sz,g);const js=new THREE.Mesh(new THREE.PlaneGeometry(1.55,.36),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(sx,1.05,sz+.06);g.add(js);}
+function signPlate(g,text,color,w,y,z){const tx=canvasTex(512,96,(x,cw,ch)=>{x.fillStyle=color;x.fillRect(0,0,cw,ch);x.fillStyle="#fff";x.font='bold 50px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText(text,cw/2,ch/2+3);});
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w*96/512),new THREE.MeshBasicMaterial({map:tx}));m.position.set(0,y,z);g.add(m);return m;}
+/* ---------- zone 7: 서구:온 디지털트윈 (빛나는 3D 도시 모형) ---------- */
+function zoneSeoguon(g){
+  box(5,.24,3.8,0x1f3a5f,0,.12,-.2,g);const holo=new THREE.MeshBasicMaterial({color:0x4fc3f7,transparent:true,opacity:.5}),edge=new THREE.LineBasicMaterial({color:0xbff0ff});
+  [[-1.6,-1,.7,1.6],[-.6,-1.2,.6,2.4],[.5,-.8,.8,1.2],[1.6,-1.3,.6,2],[-1.2,.4,.7,.9],[.1,.5,.6,1.4],[1.4,.3,.8,.8],[-.3,-.3,.5,3]].forEach(([x,z,s,h])=>{
+    const bg=new THREE.BoxGeometry(s,h,s),m=new THREE.Mesh(bg,holo);m.position.set(x,.24+h/2,z);g.add(m);const l=new THREE.LineSegments(new THREE.EdgesGeometry(bg),edge);l.position.copy(m.position);g.add(l);});
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(2.2,.05,6,40),new THREE.MeshBasicMaterial({color:0x7fdcff}));ring.rotation.x=Math.PI/2;ring.position.y=3.8;g.add(ring);g.userData.ring=ring;
+  box(2.3,.5,.1,0x174a8b,0,.6,1.75,g);signPlate(g,"서구:온 디지털트윈","#1e6fd9",2.2,.6,1.81);
+  person(-1.6,2.4,g,0x1e6fd9);
+}
+/* ---------- zone 8: 조목조목 (기둥 건물 + 펼친 법전) ---------- */
+function zoneJomok(g){
+  box(4,2.4,2.6,0xf3eefa,0,1.2,-.6,g);box(4.4,.2,3,0xe2d9f3,0,2.5,-.6,g);roof(4.6,1,3.2,0x6b4fa0,0,3.1,-.6,g);
+  box(4.2,.18,1,0xe2d9f3,0,.09,1.1,g);[-1.5,-.5,.5,1.5].forEach(x=>cyl(.17,.2,2.3,0xffffff,x,1.3,1.1,g,10));box(4.2,.22,1,0xe2d9f3,0,2.45,1.1,g);
+  box(.95,1.4,.06,0x5b4a7a,0,.7,.71,g);signPlate(g,"조목조목","#6b4fa0",1.8,2.45,1.62);
+  const st=new THREE.Group();st.position.set(0,0,2.2);g.add(st);box(.12,.8,.12,0x7a6f62,0,.4,0,st);
+  [-1,1].forEach(sd=>{const pg=box(.6,.05,.8,0xfffdf5,sd*.31,.86+.05,0,st);pg.rotation.z=sd*.12;box(.62,.04,.82,0x6b4fa0,sd*.31,.84,0,st).rotation.z=sd*.12;});
+  person(1.3,2.6,g,0xffffff);
+}
+/* ---------- zone 9: 챙겼당께 (둥근 지붕 의회 + 서류함) ---------- */
+function zoneChaeng(g){
+  box(4,2,2.8,0xfdf2f8,0,1,-.4,g);box(4.3,.2,3.1,0xf5d0e6,0,2.1,-.4,g);
+  const dome=new THREE.Mesh(new THREE.SphereGeometry(1.25,16,10,0,Math.PI*2,0,Math.PI/2),M(0xb59ae8));dome.position.set(0,2.2,-.4);g.add(dome);cyl(.04,.04,.9,0x8a8f94,0,3.85,-.4,g,5);box(.45,.28,.03,0xdb2777,.24,4.15,-.4,g);
+  box(1,1.3,.06,0x6f8796,0,.65,1.02,g);signPlate(g,"챙겼당께","#db2777",1.8,1.65,1.03);
+  [[-1.4,0xf5c84c],[-.95,0x7cc4e8],[-.5,0xb59ae8]].forEach(([x,c],k)=>{box(.4,.55+k*.12,.3,c,x,(.55+k*.12)/2,2,g);});
+  person(1.2,2.4,g,0xdb2777);
+}
 const glowTex=canvasTex(64,64,(x,w,h)=>{const r=x.createRadialGradient(32,32,2,32,32,32);r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=r;x.fillRect(0,0,w,h);});
 
-const builders={bapsang:zoneBapsang,safety:zoneSafety,store:zoneStore,family:zoneFamily,bell:zoneBell,bus:zoneBus};
+const builders={bapsang:zoneBapsang,safety:zoneSafety,store:zoneStore,family:zoneFamily,bell:zoneBell,bus:zoneBus,seoguon:zoneSeoguon,jomok:zoneJomok,chaeng:zoneChaeng};
 ZONES.forEach((z,i)=>{const g=new THREE.Group();g.position.set(z.x,0.9,z.z);g.rotation.y=z.ry;builders[z.p.key](g);scene.add(g);z.group=g;
   g.traverse(o=>{if(o.isMesh)o.userData.zone=i;});
   const ring=new THREE.Mesh(new THREE.RingGeometry(4.6,4.9,40),new THREE.MeshBasicMaterial({color:new THREE.Color(z.p.color),transparent:true,opacity:0}));ring.rotation.x=-Math.PI/2;ring.position.set(z.x,0.97,z.z);scene.add(ring);z.ring=ring;
@@ -469,12 +533,13 @@ function clearSpot(x,z){if(rhoAt(x,z)>.88)return false;
   if(x>HX-6&&x<HX+6&&z>HZ-6.5&&z<HZ+5)return false;
   for(const zz of ZONES)if(Math.hypot(x-zz.x,z-zz.z)<5.4||Math.hypot(x-zz.ex,z-zz.ez)<3)return false;
   for(const o of OREUM)if(Math.hypot(x-o[0],z-o[1])<o[2]+.9)return false;
-  if(Math.hypot(x-BR_A.x,z-BR_A.z)<3.2)return false;
+  for(const Br of BRIDGES)if(Math.hypot(x-Br.A.x,z-Br.A.z)<3.2)return false;
   for(const p of PATH_PTS)if((x-p.x)*(x-p.x)+(z-p.z)*(z-p.z)<3.4)return false;return true;}
 const TREE=[];
 for(let i=0;i<900&&TREE.length<110;i++){const a=rnd()*Math.PI*2,f=.5+Math.sqrt(rnd())*.38,k=coastK(a)*f,x=Math.cos(a)*IA*k,z=Math.sin(a)*IB*k;
   if(!clearSpot(x,z)||TREE.some(([tx,tz])=>Math.hypot(tx-x,tz-z)<1.8))continue;TREE.push([x,z,.75+rnd()*.5]);}
-{const front=Math.atan2(BR_A.z-SC.z,BR_A.x-SC.x);for(let k=0;k<14;k++){const a=front+1.05+k*(Math.PI*2-2.1)/13,r=R2(a)*.8;TREE.push([SC.x+Math.cos(a)*r,SC.z+Math.sin(a)*r,.7+rnd()*.35]);}}// 정미니 아일랜드 둘레 나무
+ISLES.forEach((I,ii)=>{const Br=BRIDGES[ii],front=Math.atan2(Br.A.z-I.z,Br.A.x-I.x),skip=ii?[-2.95,-Math.PI/2,-.19]:[],cnt=ii?22:14;
+  for(let k=0;k<cnt;k++){const a=front+1.05+k*(Math.PI*2-2.1)/(cnt-1);if(skip.some(b=>Math.abs(((a-b+Math.PI*3)%(Math.PI*2))-Math.PI)<.5))continue;const r=Rk(I,a)*.8;TREE.push([I.x+Math.cos(a)*r,I.z+Math.sin(a)*r,.7+rnd()*.35]);}});// 작은 섬 둘레 나무
 const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15,0.2,1,6),M(0x7a5536),TREE.length);
 const leaves=new THREE.InstancedMesh(new THREE.ConeGeometry(0.9,2,7),M(0x4f9a4a),TREE.length);
 const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),one=new THREE.Vector3();
@@ -493,9 +558,9 @@ introClouds.visible=false;scene.add(introClouds);
 
 /* ---------- 걷기 세계: 땅 높이와 부딪힘 ---------- */
 function onPath(x,z){for(const p of PATH_PTS){const dx=x-p.x,dz=z-p.z;if(dx*dx+dz*dz<.81)return true;}return false;}
-function onBridge(x,z){const b=bridgeDist(x,z);return b.d<1&&b.t>.02&&b.t<.98&&rhoAt(x,z)>.84&&rho2(x,z)>.84;}
+function onBridge(x,z){if(rhoAt(x,z)<=.84||ISLES.some(I=>rhoI(I,x,z)<=.84))return false;return BRIDGES.some(Br=>{const b=bridgeDist(Br,x,z);return b.d<1.1&&b.t>.02&&b.t<.98;});}
 function groundAt(x,z){if(Math.hypot(x-HX,z-HZ)<3.2)return 1.02;if(onBridge(x,z))return 1.01;return onPath(x,z)?.96:.9;}
-function walkable(x,z){if(rhoAt(x,z)<=.86||rho2(x,z)<=.84)return true;const b=bridgeDist(x,z);return b.t>0&&b.t<1&&b.d<=.75;}
+function walkable(x,z){if(rhoAt(x,z)<=.86||ISLES.some(I=>rhoI(I,x,z)<=.84))return true;return BRIDGES.some(Br=>{const b=bridgeDist(Br,x,z);return b.t>0&&b.t<1&&b.d<=.75;});}
 scene.updateMatrixWorld(true);
 const OBST=[],RECTS=[{x0:HX-3.75,x1:HX+3.75,z0:HZ-3.55,z1:HZ+.38,h:8}];
 const LOCAL_OBST={
@@ -504,14 +569,17 @@ const LOCAL_OBST={
   store:[[-1.95,-.8,1],[0,-.8,1],[1.95,-.8,1],[0,1.07,.35],[-2.9,1.3,.3],[2.9,1.3,.3],[-1,1.6,.3],[1,1.8,.3]],
   family:[[-1.8,-1.2,1.15],[1.8,-1.4,1.15],[-1.6,1.8,1.15],[1.9,1.6,1.15],[0,0,.5],[-.5,.4,.3],[.5,.3,.3]],
   bus:[[-.9,-.2,1.3],[.9,-.2,1.3],[-2.3,5.1,.6],[-1.1,6.5,.15]],
+  seoguon:[[-1.3,-.6,1.3],[1.1,-.6,1.3],[0,1.1,.9],[-1.6,2.4,.3]],
+  jomok:[[-1.1,-.6,1.4],[1.1,-.6,1.4],...[-1.5,-.5,.5,1.5].map(x=>[x,1.1,.25]),[0,2.2,.4],[1.3,2.6,.3]],
+  chaeng:[[-1.1,-.4,1.4],[1.1,-.4,1.4],[-.95,2,.5],[1.2,2.4,.3]],
   bell:[[-2,-1.6,1.1],[-2,1.2,1.15],[2,-1,1.15],[2,1.8,1],[-.95,-2.6,.2],[.95,-.4,.2],[-.95,1.6,.2],[.95,3,.2],[.2,-1.4,.3]]};
 {const v=new THREE.Vector3();ZONES.forEach(z=>LOCAL_OBST[z.p.key].forEach(([x,y,r])=>{v.set(x,0,y);z.group.localToWorld(v);OBST.push({x:v.x,z:v.z,r,h:r>.9?4.6:0});}));}
-OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0});OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1}));TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
+OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0},{x:JC.x,z:JC.z,r:.95,h:3.3},{x:JC.x+1.6,z:BRIDGES[1].B.z-.6,r:.15,h:0});OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1}));TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
 function collide(p,r){
   for(const o of OBST){const dx=p.x-o.x,dz=p.z-o.z,d=Math.hypot(dx,dz),m=o.r+r;if(d<m&&d>1e-4){p.x=o.x+dx/d*m;p.z=o.z+dz/d*m;}}
   for(const b of RECTS){const cx=clamp(p.x,b.x0,b.x1),cz=clamp(p.z,b.z0,b.z1),dx=p.x-cx,dz=p.z-cz,d=Math.hypot(dx,dz);
     if(d<r){if(d>1e-4){p.x=cx+dx/d*r;p.z=cz+dz/d*r;}else{const e=[[p.x-b.x0,"x",b.x0-r],[b.x1-p.x,"x",b.x1+r],[p.z-b.z0,"z",b.z0-r],[b.z1-p.z,"z",b.z1+r]].sort((a,c)=>a[0]-c[0])[0];p[e[1]]=e[2];}}}
-  if(!walkable(p.x,p.z)){const rh=rhoAt(p.x,p.z),c=[[p.x*.86/rh,p.z*.86/rh]],dx=p.x-SC.x,dz=p.z-SC.z,dd=Math.hypot(dx,dz)||1,rr=R2(Math.atan2(dz,dx))*.84;c.push([SC.x+dx/dd*Math.min(dd,rr),SC.z+dz/dd*Math.min(dd,rr)]);const b=bridgeDist(p.x,p.z);if(b.t>0&&b.t<1){const k=.75/(b.d||1);c.push([b.px+(p.x-b.px)*k,b.pz+(p.z-b.pz)*k]);}let best=c[0],bd=1e9;c.forEach(q=>{const d=Math.hypot(q[0]-p.x,q[1]-p.z);if(d<bd){bd=d;best=q;}});p.x=best[0];p.z=best[1];}
+  if(!walkable(p.x,p.z)){const rh=rhoAt(p.x,p.z),c=[[p.x*.86/rh,p.z*.86/rh]];ISLES.forEach(I=>{const dx=p.x-I.x,dz=p.z-I.z,dd=Math.hypot(dx,dz)||1,rr=Rk(I,Math.atan2(dz,dx))*.84;c.push([I.x+dx/dd*Math.min(dd,rr),I.z+dz/dd*Math.min(dd,rr)]);});BRIDGES.forEach(Br=>{const b=bridgeDist(Br,p.x,p.z);if(b.t>0&&b.t<1){const k=.75/(b.d||1);c.push([b.px+(p.x-b.px)*k,b.pz+(p.z-b.pz)*k]);}});let best=c[0],bd=1e9;c.forEach(q=>{const d=Math.hypot(q[0]-p.x,q[1]-p.z);if(d<bd){bd=d;best=q;}});p.x=best[0];p.z=best[1];}
 }
 function camBlocked(x,y,z){for(const b of RECTS)if(y<b.h&&x>b.x0-.3&&x<b.x1+.3&&z>b.z0-.3&&z<b.z1+.3)return true;for(const o of OBST)if(y<o.h&&Math.hypot(x-o.x,z-o.z)<o.r+.3)return true;return false;}
 function angLerp(a,b,k){const d=((b-a+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)-Math.PI;return a+d*k;}
@@ -525,7 +593,10 @@ const NPC_LOOK={
   store:{name:"가게 해온이",look:{top:0x3b82c4,pants:0x2d3440,cap:0xf5c84c,extra:"scarf",scarf:0xf5c84c}},
   family:{name:"함께 해온이",look:{top:0xf2a7b8,pants:0x2e3f63,extra:"overall"}},
   bell:{name:"안심 해온이",look:{top:0xd23b3b,pants:0x2d3440,extra:"stripe"}},
-  bus:{name:"버스 해온이",look:{top:0xf5b82e,pants:0x2d3440,cap:0x14866d,extra:"collar"}}};
+  bus:{name:"버스 해온이",look:{top:0xf5b82e,pants:0x2d3440,cap:0x14866d,extra:"collar"}},
+  seoguon:{name:"트윈 해온이",look:{top:0x1e6fd9,pants:0x22355a,cap:0x9be7ff,extra:"collar"}},
+  jomok:{name:"조목 해온이",look:{top:0x6b4fa0,pants:0x2d3440,extra:"suit"}},
+  chaeng:{name:"챙김 해온이",look:{top:0xdb2777,pants:0x2e3f63,extra:"scarf",scarf:0xf5c84c}}};
 const NPCS=[...ZONES.map(z=>({...NPC_LOOK[z.p.key],zone:z})),{name:"안내 해온이",look:{top:0x22355a,pants:0x22355a,extra:"suit"}}].map((n,i)=>{
   let x=HX-2.3,z=HZ+2.1,yaw=.35;if(n.zone){const q=n.zone;x=q.ex+q.fz*1.6;z=q.ez-q.fx*1.6;yaw=q.ry;}
   const h=makeHaeon(n.look,1);h.root.position.set(x,groundAt(x,z),z);h.root.rotation.y=h.yaw=h.home=yaw;h.root.userData.npc=i;scene.add(h.root);
@@ -555,7 +626,7 @@ function updateWalkers(dt){walkers.forEach(w=>{
 
 /* ---------- camera rig ---------- */
 // 섬 전체 보기: 가로 화면은 남쪽에서, 세로 화면(폰)은 섬을 세로로 길게 보이도록 동쪽에서
-function overview(){const r=innerWidth/innerHeight;return r<.8?{tx:6,ty:1,tz:-8,az:-1.72,el:.86,dist:r<.6?128:112,ox:0,oy:0}:{tx:3,ty:1,tz:-2,az:-.2,el:.66,dist:r<1.25?92:78,ox:0,oy:0};}
+function overview(){const r=innerWidth/innerHeight;return r<.8?{tx:4,ty:1,tz:-14.5,az:-1.66,el:.86,dist:r<.6?208:180,ox:0,oy:0}:{tx:3,ty:1,tz:-5,az:-.2,el:.66,dist:r<1.25?96:82,ox:0,oy:0};}
 function nearAng(a,cur){return cur+(((a-cur+Math.PI)%(Math.PI*2))+Math.PI*2)%(Math.PI*2)-Math.PI;}
 function overGoal(){const o=overview(),a=nearAng(o.az,rig.az),b=nearAng(o.az+Math.PI,rig.az);o.az=innerWidth/innerHeight<.8||Math.abs(a-rig.az)<=Math.abs(b-rig.az)?a:b;return o;}// 폰은 정미니 아일랜드가 위쪽에 보이도록 방향 고정
 const LAND_AZ=.08;function hallView(){const narrow=innerWidth/innerHeight<.8;return {tx:HX,ty:3,tz:HZ,az:LAND_AZ,el:.36,dist:narrow?36:28,ox:0,oy:0};}
@@ -689,7 +760,7 @@ function talkContent(i,step){
     if(step==="news"){const items=(NEWS.items||[]).slice(0,2);
       return {msg:items.length?"오늘 여러 언론이 많이 다룬 서구 소식이에요. 구청 현수막에도 걸어뒀어요!":"오늘 소식을 아직 못 가져왔어요. 조금 뒤에 다시 물어봐 주세요.",
         opts:[...items.map((n,k)=>({href:n.url,l:`${k+1}. ${n.short||n.title} ↗`,cls:"wide"})),...ask,bye]};}
-    return {msg:step==="island"?"서구청 직원이 일하면서 만든 생활 도구 6곳을 모아둔 섬이에요. 동쪽 다리를 건너면 정미니 아일랜드도 있어요. 섬 곳곳 건물 앞에 서 있는 해온이들에게 말을 걸면 하나씩 알려줘요.":"광주 서구청에 오신 걸 환영해요! 섬 안내를 맡은 안내 해온이예요. 뭐부터 알려드릴까요?",
+    return {msg:step==="island"?"서구청 직원이 일하면서 만든 생활 도구 9곳을 모아둔 섬이에요. 동쪽 나무다리를 건너면 정미니 아일랜드, 서구청 뒤 돌다리를 건너면 저스티스 아일랜드가 있어요. 섬 곳곳 건물 앞에 서 있는 해온이들에게 말을 걸면 하나씩 알려줘요.":"광주 서구청에 오신 걸 환영해요! 섬 안내를 맡은 안내 해온이예요. 뭐부터 알려드릴까요?",
       opts:[...ask,{href:"https://www.seogu.gwangju.kr/",l:"서구청 누리집 ↗"},bye]};
   }
   const p=PROJECTS[i],ask=[{k:"what",l:"이건 뭐예요?"},{k:"who",l:"누가 쓰나요?"},{k:"install",l:"폰에 어떻게 깔아요?"}].filter(o=>o.k!==step);
@@ -784,7 +855,7 @@ function frame(t){
   const fov=walking?55:40;if(Math.abs(camera.fov-fov)>.05){camera.fov+=(fov-camera.fov)*Math.min(1,dt*4);camera.updateProjectionMatrix();moving=true;}
   // gentle ambient life (walkers, clouds, bells, boat) — skipped for reduced motion
   if(!reduce){updateWalkers(dt);clouds.forEach(c=>{c.position.x+=0.01;if(c.position.x>90)c.position.x=-90;});boat.position.y=-0.3+Math.sin(s*1.4)*0.08;boat.rotation.z=Math.sin(s*1.1)*0.04;
-    zoneBy.bell.group.userData.glows.forEach((h,i)=>{h.material.opacity=0.35+0.45*(0.5+0.5*Math.sin(s*3+i));});{const g=zoneBy.bus.group.userData,b=g.bus;g.busA+=dt*.32;b.position.x=Math.sin(g.busA)*4.4;b.position.z=Math.cos(g.busA)*4.4;b.rotation.y=g.busA+Math.PI/2;}const sp=zoneBy.family.group.userData.spin;if(sp)sp.rotation.y=s*0.8;foam.material.opacity=0.4+0.15*Math.sin(s*1.3);}
+    zoneBy.bell.group.userData.glows.forEach((h,i)=>{h.material.opacity=0.35+0.45*(0.5+0.5*Math.sin(s*3+i));});zoneBy.seoguon.group.userData.ring.rotation.z=s*.6;JC.statue.userData.beam.rotation.z=Math.sin(s*.9)*.06;{const g=zoneBy.bus.group.userData,b=g.bus;g.busA+=dt*.32;b.position.x=Math.sin(g.busA)*4.4;b.position.z=Math.cos(g.busA)*4.4;b.rotation.y=g.busA+Math.PI/2;}const sp=zoneBy.family.group.userData.spin;if(sp)sp.rotation.y=s*0.8;foam.material.opacity=0.4+0.15*Math.sin(s*1.3);}
   updateNpcs(dt,s);animHaeon(player,dt,s);NPCS.forEach(n=>animHaeon(n.h,dt,s));walkers.forEach(w=>animHaeon(w.h,dt,s));
   renderer.render(scene,camera);updatePins();
   if(walking||INTRO.on){requestRender();return;}
