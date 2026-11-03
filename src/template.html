@@ -101,7 +101,9 @@ button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .enter{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 58px);border:0;border-radius:999px;padding:14px 22px;background:var(--orange);color:#fff;font-size:15px;font-weight:700;box-shadow:0 10px 28px rgba(217,89,10,.35);cursor:pointer;white-space:nowrap}
 .stick{position:fixed;z-index:5;left:calc(env(safe-area-inset-left,0px) + 22px);bottom:calc(env(safe-area-inset-bottom,0px) + 30px);width:128px;height:128px;border-radius:50%;background:rgba(255,255,255,.32);border:2px solid rgba(255,255,255,.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);touch-action:none}
 .stick i{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:#fff;box-shadow:0 4px 14px rgba(20,60,80,.25);pointer-events:none}
-.talk-btn{position:fixed;z-index:5;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 48px);border:0;border-radius:999px;padding:16px 22px;background:var(--orange);color:#fff;font-size:16px;font-weight:700;box-shadow:0 10px 28px rgba(217,89,10,.35);cursor:pointer;animation:pop .25s ease-out}
+.jump-btn{position:fixed;z-index:5;right:20px;bottom:calc(env(safe-area-inset-bottom,0px) + 34px);width:82px;height:82px;border:0;border-radius:50%;background:rgba(255,255,255,.88);color:var(--ink);font-size:26px;font-weight:700;line-height:1;box-shadow:0 10px 28px rgba(20,60,80,.25);display:grid;place-items:center;touch-action:none;-webkit-user-select:none;user-select:none}
+.jump-btn small{display:block;font-size:11px;margin-top:2px}.jump-btn.on{background:#ffe7a8}
+.talk-btn{position:fixed;z-index:5;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 130px);border:0;border-radius:999px;padding:16px 22px;background:var(--orange);color:#fff;font-size:16px;font-weight:700;box-shadow:0 10px 28px rgba(217,89,10,.35);cursor:pointer;animation:pop .25s ease-out}
 @keyframes pop{from{transform:scale(.7);opacity:0}}
 body.walking .pin{pointer-events:none}
 body.walking .credit{display:none}
@@ -166,6 +168,7 @@ body.walking .hint{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 74px);whi
 <div id="walkUi" hidden>
   <div class="stick" id="stick" aria-label="걷기 조이스틱"><i id="knob"></i></div>
   <button class="talk-btn" id="talkBtn" type="button" hidden>💬 말 걸기</button>
+  <button class="jump-btn" id="jumpBtn" type="button" aria-label="점프, 공중에서 한 번 더 누르면 날기">⤴<small>점프</small></button>
 </div>
 <div class="talk" id="talk" role="dialog" aria-labelledby="tName" hidden>
   <div class="thead"><img alt="" id="tImg"><div><b id="tName"></b><small id="tRole"></small></div><button class="x" id="tClose" type="button" aria-label="대화 닫기">×</button></div>
@@ -390,6 +393,10 @@ function staticHaeon(o){
 }
 // 마인크래프트처럼 팔다리만 앞뒤로 흔듭니다(몸은 늘어나거나 눌리지 않음)
 function animHaeon(h,dt,s){
+  if(h.land>0){h.land=Math.max(0,h.land-dt*5);const k=Math.sin(h.land*Math.PI)*.18;h.inner.scale.set(1+k,1-k,1+k);}
+  if(h.fly){const f=Math.sin(s*15)*.45;[-1,1].forEach((sd,i)=>{h.arms[i].rotation.x=0;h.arms[i].rotation.z=sd*(1.45+f);});h.legs[0].rotation.x=h.legs[1].rotation.x=.35;return;}
+  if(h.air){h.legs[0].rotation.x=-.5;h.legs[1].rotation.x=.4;[-1,1].forEach((sd,i)=>{h.arms[i].rotation.x=-.3;h.arms[i].rotation.z+=(sd*.6-h.arms[i].rotation.z)*Math.min(1,dt*12);});return;}
+  if(Math.abs(h.arms[0].rotation.z+ARM_REST)>.01)h.arms[0].rotation.z+=(-ARM_REST-h.arms[0].rotation.z)*Math.min(1,dt*10);
   const w=Math.min(1,h.v/1.1),sn=Math.sin(h.phase+=dt*h.v*4.5);
   h.legs[0].rotation.x=sn*.8*w;h.legs[1].rotation.x=-sn*.8*w;h.arms[0].rotation.x=-sn*.7*w;h.arms[1].rotation.x=h.wave>0?0:sn*.7*w;
   if(h.wave>0)h.wave-=dt;const g=h.wave>0?2.7+Math.sin(s*12)*.3:ARM_REST;h.arms[1].rotation.z+=(g-h.arms[1].rotation.z)*Math.min(1,dt*10);
@@ -479,7 +486,7 @@ function zoneBus(g){
   const top=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),M(GOLD));top.position.y=3.2;g.add(top);g.userData.beam=beam;JC.statue=g;
   const jTex=canvasTex(448,96,(x,w,h)=>{x.fillStyle="#e9e4da";x.fillRect(0,0,w,h);x.strokeStyle="#8a8174";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#4a443c";x.font='bold 42px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("저스티스 아일랜드",w/2,h/2+3);});
   const sg=new THREE.Group();sg.position.set(JB.B.x+Math.cos(JRY)*1.9,.9,JB.B.z-Math.sin(JRY)*1.9);sg.rotation.y=JRY;scene.add(sg);JC.sign=sg;
-  box(.16,1.1,.16,0x9e978b,0,.55,0,sg);box(1.65,.44,.1,0x9e978b,0,1.05,0,sg);const js=new THREE.Mesh(new THREE.PlaneGeometry(1.55,.36),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(0,1.05,.06);sg.add(js);}
+  box(.2,2.4,.2,0x9e978b,0,1.2,0,sg);box(2.45,.64,.12,0x9e978b,0,2.4,0,sg);const js=new THREE.Mesh(new THREE.PlaneGeometry(2.32,.54),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(0,2.4,.07);sg.add(js);}
 function signPlate(g,text,color,w,y,z){const tx=canvasTex(512,96,(x,cw,ch)=>{x.fillStyle=color;x.fillRect(0,0,cw,ch);x.fillStyle="#fff";x.font='bold 50px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText(text,cw/2,ch/2+3);});
   const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w*96/512),new THREE.MeshBasicMaterial({map:tx}));m.position.set(0,y,z);g.add(m);return m;}
 /* ---------- zone 7: 서구:온 디지털트윈 (빛나는 3D 도시 모형) ---------- */
@@ -531,7 +538,7 @@ const TREE=[];
 for(let i=0;i<900&&TREE.length<110;i++){const a=rnd()*Math.PI*2,f=.5+Math.sqrt(rnd())*.38,k=coastK(a)*f,x=Math.cos(a)*IA*k,z=Math.sin(a)*IB*k;
   if(!clearSpot(x,z)||TREE.some(([tx,tz])=>Math.hypot(tx-x,tz-z)<1.8))continue;TREE.push([x,z,.75+rnd()*.5]);}
 ISLES.forEach((I,ii)=>{const Br=BRIDGES[ii],front=Math.atan2(Br.A.z-I.z,Br.A.x-I.x),skip=ZONES.filter(z=>rhoI(I,z.x,z.z)<1&&Math.hypot(z.x-I.x,z.z-I.z)>2).map(z=>Math.atan2(z.z-I.z,z.x-I.x)),cnt=ii?36:14;
-  for(let k=0;k<cnt;k++){const a=front+1.05+k*(Math.PI*2-2.1)/(cnt-1);if(skip.some(b=>Math.abs(((a-b+Math.PI*3)%(Math.PI*2))-Math.PI)<.42))continue;const r=Rk(I,a)*.82;TREE.push([I.x+Math.cos(a)*r,I.z+Math.sin(a)*r,.75+rnd()*.4]);}});// 작은 섬 둘레 나무
+  for(let k=0;k<cnt;k++){const a=front+1.05+k*(Math.PI*2-2.1)/(cnt-1);if(skip.some(b=>Math.abs(((a-b+Math.PI*3)%(Math.PI*2))-Math.PI)<.42))continue;const r=Rk(I,a)*.82;if(ii&&Math.hypot(I.x+Math.cos(a)*r-JC.sign.position.x,I.z+Math.sin(a)*r-JC.sign.position.z)<4)continue;TREE.push([I.x+Math.cos(a)*r,I.z+Math.sin(a)*r,.75+rnd()*.4]);}});// 작은 섬 둘레 나무
 const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15,0.2,1,6),M(0x7a5536),TREE.length);
 const leaves=new THREE.InstancedMesh(new THREE.ConeGeometry(0.9,2,7),M(0x4f9a4a),TREE.length);
 const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),one=new THREE.Vector3();
@@ -567,10 +574,11 @@ const LOCAL_OBST={
   bell:[[-2,-1.6,1.1],[-2,1.2,1.15],[2,-1,1.15],[2,1.8,1],[-.95,-2.6,.2],[.95,-.4,.2],[-.95,1.6,.2],[.95,3,.2],[.2,-1.4,.3]]};
 {const v=new THREE.Vector3();ZONES.forEach(z=>LOCAL_OBST[z.p.key].forEach(([x,y,r])=>{v.set(x,0,y);z.group.localToWorld(v);OBST.push({x:v.x,z:v.z,r:r*z.sc,h:r>.9?4.6*z.sc:0});}));}
 OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0},{x:JC.x,z:JC.z,r:1.25,h:4.3},{x:JC.sign.position.x,z:JC.sign.position.z,r:.15,h:0});OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1}));TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
-function collide(p,r){
-  for(const o of OBST){const dx=p.x-o.x,dz=p.z-o.z,d=Math.hypot(dx,dz),m=o.r+r;if(d<m&&d>1e-4){p.x=o.x+dx/d*m;p.z=o.z+dz/d*m;}}
-  for(const b of RECTS){const cx=clamp(p.x,b.x0,b.x1),cz=clamp(p.z,b.z0,b.z1),dx=p.x-cx,dz=p.z-cz,d=Math.hypot(dx,dz);
+function collide(p,r,y,fly){y=y||0;
+  for(const o of OBST){if(y>(o.h>0?.9+o.h:o.r<=.35?1.9:4.6))continue;const dx=p.x-o.x,dz=p.z-o.z,d=Math.hypot(dx,dz),m=o.r+r;if(d<m&&d>1e-4){p.x=o.x+dx/d*m;p.z=o.z+dz/d*m;}}
+  for(const b of RECTS){if(y>.9+b.h)continue;const cx=clamp(p.x,b.x0,b.x1),cz=clamp(p.z,b.z0,b.z1),dx=p.x-cx,dz=p.z-cz,d=Math.hypot(dx,dz);
     if(d<r){if(d>1e-4){p.x=cx+dx/d*r;p.z=cz+dz/d*r;}else{const e=[[p.x-b.x0,"x",b.x0-r],[b.x1-p.x,"x",b.x1+r],[p.z-b.z0,"z",b.z0-r],[b.z1-p.z,"z",b.z1+r]].sort((a,c)=>a[0]-c[0])[0];p[e[1]]=e[2];}}}
+  if(fly){const dx=p.x-2,dz=p.z+12,d=Math.hypot(dx,dz),lim=72;if(d>lim){p.x=2+dx/d*lim;p.z=-12+dz/d*lim;}return;}// 날 때는 바다 위도 OK, 너무 멀리는 못 감
   if(!walkable(p.x,p.z)){const rh=rhoAt(p.x,p.z),c=[[p.x*.86/rh,p.z*.86/rh]];ISLES.forEach(I=>{const dx=p.x-I.x,dz=p.z-I.z,dd=Math.hypot(dx,dz)||1,rr=Rk(I,Math.atan2(dz,dx))*.84;c.push([I.x+dx/dd*Math.min(dd,rr),I.z+dz/dd*Math.min(dd,rr)]);});BRIDGES.forEach(Br=>{const b=bridgeDist(Br,p.x,p.z);if(b.t>0&&b.t<1){const k=.75/(b.d||1);c.push([b.px+(p.x-b.px)*k,b.pz+(p.z-b.pz)*k]);}});let best=c[0],bd=1e9;c.forEach(q=>{const d=Math.hypot(q[0]-p.x,q[1]-p.z);if(d<bd){bd=d;best=q;}});p.x=best[0];p.z=best[1];}
 }
 function camBlocked(x,y,z){for(const b of RECTS)if(y<b.h&&x>b.x0-.3&&x<b.x1+.3&&z>b.z0-.3&&z<b.z1+.3)return true;for(const o of OBST)if(y<o.h&&Math.hypot(x-o.x,z-o.z)<o.r+.3)return true;return false;}
@@ -597,7 +605,7 @@ const NPCS=[...ZONES.map(z=>({...NPC_LOOK[z.p.key],zone:z})),{name:"안내 해�
 
 /* ---------- 내 해온이 ---------- */
 const player=makeHaeon({top:0xc8372d,pants:0x5b4636,extra:"scarf"},1);
-const P={x:HX,z:HZ+4.6,vx:0,vz:0};player.root.position.set(P.x,groundAt(P.x,P.z),P.z);player.root.rotation.y=player.yaw=Math.PI;scene.add(player.root);
+const P={x:HX,z:HZ+4.6,vx:0,vz:0,y:1.02,vy:0,air:false,fly:false};player.root.position.set(P.x,groundAt(P.x,P.z),P.z);player.root.rotation.y=player.yaw=Math.PI;scene.add(player.root);
 
 /* ---------- 길을 걷는 해온이 6명: 안쪽 둥근 길 + 건물로 가는 길 ---------- */
 function walkerAt(w){const a=NODES[w.from],b=NODES[w.to],dx=b.x-a.x,dz=b.z-a.z,L=Math.hypot(dx,dz)||1;return {x:a.x+dx*w.t-dz/L*.42,z:a.z+dz*w.t+dx/L*.42,yaw:Math.atan2(dx,dz),L};}
@@ -705,14 +713,14 @@ function enterWalk(){
   WC.pos.copy(camera.position);WC.look.set(rig.tx,rig.ty,rig.tz);WC.yaw=player.yaw+Math.PI;WC.pitch=.34;WC.fast=0;camera.clearViewOffset();
   $("viewBtn").textContent="↩ 하늘에서 보기";$("enterBtn").hidden=true;$("walkUi").hidden=false;$("stick").hidden=!touchUI;nearNpc=-1;
   if(!touchUI)lockMouse();
-  showHint(touchUI?"왼쪽 동그라미로 걷고, 화면을 끌어 둘러보세요":"마우스로 둘러보고 WASD로 걸어요 · Esc를 누르면 커서가 나와요",6000);requestRender();
+  showHint(touchUI?"왼쪽 동그라미로 걷고, 점프 버튼을 두 번 누르면 날아요":"WASD로 걷고 스페이스로 점프, 공중에서 한 번 더 누르면 날아요 · Esc를 누르면 커서가 나와요",6500);$("jumpBtn").hidden=!touchUI;requestRender();
 }
 function exitWalk(){
   if(!walking)return;unlockMouse();closeTalk();walking=false;document.body.classList.remove("walking");
   const d=camera.position.clone().sub(WC.look),L=d.length()||1;
   Object.assign(rig,{tx:WC.look.x,ty:WC.look.y,tz:WC.look.z,dist:L,az:Math.atan2(d.x,d.z),el:Math.asin(clamp(d.y/L,-1,1)),ox:0,oy:0});
   Object.assign(goal,overGoal());atOverview=true;
-  P.vx=P.vz=0;player.v=0;for(const k in keys)keys[k]=false;resetStick();
+  P.vx=P.vz=0;player.v=0;for(const k in keys)keys[k]=false;resetStick();jumpHeld=false;if(P.air||P.fly){if(!walkable(P.x,P.z)){P.x=HX;P.z=HZ+4.6;}land();}P.y=groundAt(P.x,P.z);player.root.position.set(P.x,P.y,P.z);
   $("viewBtn").textContent="목록으로 보기";$("walkUi").hidden=true;$("talkBtn").hidden=true;$("enterBtn").hidden=false;startTween();
 }
 $("enterBtn").onclick=enterWalk;
@@ -720,18 +728,34 @@ function updatePlayer(dt){
   let ix=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+stick.x,iy=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)+stick.y;
   if(talkNpc>=0||!$("guide").hidden)ix=iy=0;
   const m=Math.hypot(ix,iy);if(m>1){ix/=m;iy/=m;}
-  const sy=Math.sin(WC.yaw),cy=Math.cos(WC.yaw),mx=-sy*iy+cy*ix,mz=-cy*iy-sy*ix,SPEED=3.6,k=Math.min(1,dt*10);
+  const sy=Math.sin(WC.yaw),cy=Math.cos(WC.yaw),mx=-sy*iy+cy*ix,mz=-cy*iy-sy*ix,SPEED=P.fly?6.5:3.6,k=Math.min(1,dt*10);
   P.vx+=(mx*SPEED-P.vx)*k;P.vz+=(mz*SPEED-P.vz)*k;
-  const q={x:P.x+P.vx*dt,z:P.z+P.vz*dt};collide(q,.4);
-  [...NPCS.map(n=>n.h),...walkers.map(w=>w.h)].forEach(h=>{const o=h.root.position,dx=q.x-o.x,dz=q.z-o.z,d=Math.hypot(dx,dz);if(d<.75&&d>1e-4){q.x=o.x+dx/d*.75;q.z=o.z+dz/d*.75;}});
+  const q={x:P.x+P.vx*dt,z:P.z+P.vz*dt};collide(q,.4,P.y,P.fly);
+  if(P.y-groundAt(q.x,q.z)<1.2)[...NPCS.map(n=>n.h),...walkers.map(w=>w.h)].forEach(h=>{const o=h.root.position,dx=q.x-o.x,dz=q.z-o.z,d=Math.hypot(dx,dz);if(d<.75&&d>1e-4){q.x=o.x+dx/d*.75;q.z=o.z+dz/d*.75;}});
   P.vx=(q.x-P.x)/dt;P.vz=(q.z-P.z)/dt;P.x=q.x;P.z=q.z;
-  player.root.position.set(P.x,groundAt(P.x,P.z),P.z);player.v=Math.hypot(P.vx,P.vz);
+  stepJump(dt);player.root.position.set(P.x,P.y,P.z);player.v=P.air||P.fly?0:Math.hypot(P.vx,P.vz);
   if(m>.08)player.yaw=angLerp(player.yaw,Math.atan2(mx,mz),Math.min(1,dt*12));player.root.rotation.y=player.yaw;
   // 가장 가까운 안내 해온이
-  let best=-1,bd=2.6;NPCS.forEach(n=>{const d=Math.hypot(P.x-n.x,P.z-n.z);if(d<bd){bd=d;best=n.i;}});
+  let best=-1,bd=2.6;if(!P.fly&&P.y-groundAt(P.x,P.z)<1)NPCS.forEach(n=>{const d=Math.hypot(P.x-n.x,P.z-n.z);if(d<bd){bd=d;best=n.i;}});
   if(best!==nearNpc){nearNpc=best;if(best>=0&&talkNpc<0)NPCS[best].h.wave=1.3;}
   $("talkBtn").hidden=nearNpc<0||talkNpc>=0;
 }
+/* ---------- 점프·날기: 스페이스(폰은 점프 버튼) 한 번 = 점프, 공중에서 한 번 더 = 날기, 날 때 누르고 있으면 위로 ---------- */
+let jumpHeld=false;
+function floorAt(x,z){return walkable(x,z)?groundAt(x,z):1.6;}// 바다 위에서는 물에 닿지 않고 떠 있음
+function jumpPress(){if(!walking||talkNpc>=0||!$("guide").hidden)return;
+  if(P.fly){P.vy=Math.max(P.vy,3);return;}
+  if(!P.air){P.air=true;P.vy=6.9;player.air=true;return;}
+  P.fly=true;player.fly=true;player.air=false;P.vy=Math.max(P.vy,3.5);$("jumpBtn").classList.add("on");$("jumpBtn").querySelector("small").textContent="날기";
+  if(!P.toldFly){P.toldFly=true;showHint(touchUI?"누르고 있으면 올라가고, 떼면 천천히 내려와요":"스페이스를 누르고 있으면 올라가고, 떼면 천천히 내려와요",4000);}}
+function land(){P.air=P.fly=false;player.air=player.fly=false;P.vy=0;player.land=1;$("jumpBtn").classList.remove("on");$("jumpBtn").querySelector("small").textContent="점프";}
+function stepJump(dt){const hold=jumpHeld||keys.Space,fl=floorAt(P.x,P.z);
+  if(P.fly){P.vy+=((hold?4.6:-1.7)-P.vy)*Math.min(1,dt*4);P.y=Math.min(24,P.y+P.vy*dt);if(P.y<=fl){P.y=fl;if(walkable(P.x,P.z))land();else P.vy=0;}return;}
+  if(P.air){P.vy-=20*dt;P.y+=P.vy*dt;if(P.y<=fl){P.y=fl;land();}return;}
+  const g=groundAt(P.x,P.z);if(g<P.y-.25){P.air=true;player.air=true;P.vy=0;}else P.y=g;}
+const jb=$("jumpBtn");
+jb.addEventListener("pointerdown",e=>{e.preventDefault();try{jb.setPointerCapture(e.pointerId)}catch(_){}jumpHeld=true;jumpPress();});
+["pointerup","pointercancel","lostpointercapture"].forEach(n=>jb.addEventListener(n,()=>{jumpHeld=false;}));
 function updateWalkCam(dt){
   WC.fast=Math.min(1,WC.fast+dt*.7);
   camLook.set(P.x,player.root.position.y+1.15,P.z);
@@ -826,7 +850,8 @@ addEventListener("keydown",e=>{
     if(e.key==="Escape"){if(!$("guide").hidden)$("guide").hidden=true;else if(talkNpc>=0)closeTalk();return;}
     if(talkNpc>=0||/INPUT|TEXTAREA/.test(e.target.tagName))return;
     if(MOVE_KEYS.includes(e.code)){keys[e.code]=true;e.preventDefault();$("hint").style.opacity=0;}
-    if((e.code==="KeyE"||e.code==="Space"||e.code==="Enter")&&nearNpc>=0){e.preventDefault();openTalk(nearNpc);}
+    if(e.code==="Space"){e.preventDefault();if(!e.repeat)jumpPress();keys.Space=true;$("hint").style.opacity=0;return;}
+    if((e.code==="KeyE"||e.code==="Enter")&&nearNpc>=0){e.preventDefault();openTalk(nearNpc);}
     return;}
   if(e.key==="Escape"&&focus>=0)closeCard();if(e.key==="ArrowRight"&&focus>=0)openZone((focus+1)%(N+1));if(e.key==="ArrowLeft"&&focus>=0)openZone((focus+N)%(N+1));});
 addEventListener("keyup",e=>{keys[e.code]=false;});
