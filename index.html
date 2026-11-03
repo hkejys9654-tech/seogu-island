@@ -498,7 +498,7 @@ function zoneBus(g){
   const top=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),M(GOLD));top.position.y=3.2;g.add(top);g.userData.beam=beam;JC.statue=g;
   const jTex=canvasTex(448,96,(x,w,h)=>{x.fillStyle="#e9e4da";x.fillRect(0,0,w,h);x.strokeStyle="#8a8174";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#4a443c";x.font='bold 42px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("저스티스 아일랜드",w/2,h/2+3);});
   const sg=new THREE.Group();sg.position.set(JB.B.x+Math.cos(JRY)*1.9,.9,JB.B.z-Math.sin(JRY)*1.9);sg.rotation.y=JRY;scene.add(sg);JC.sign=sg;
-  box(.2,2.4,.2,0x9e978b,0,1.2,0,sg);box(2.45,.64,.12,0x9e978b,0,2.4,0,sg);const js=new THREE.Mesh(new THREE.PlaneGeometry(2.32,.54),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(0,2.4,.07);sg.add(js);}
+  box(.2,2.2,.2,0x9e978b,0,1.1,-.17,sg);box(2.45,.64,.12,0x9e978b,0,2.4,0,sg);// 기둥은 글씨판 뒤로const js=new THREE.Mesh(new THREE.PlaneGeometry(2.32,.54),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(0,2.4,.07);sg.add(js);}
 function signPlate(g,text,color,w,y,z){const tx=canvasTex(512,96,(x,cw,ch)=>{x.fillStyle=color;x.fillRect(0,0,cw,ch);x.fillStyle="#fff";x.font='bold 50px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText(text,cw/2,ch/2+3);});
   const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w*96/512),new THREE.MeshBasicMaterial({map:tx}));m.position.set(0,y,z);g.add(m);return m;}
 /* ---------- zone 7: 서구:온 디지털트윈 (빛나는 3D 도시 모형) ---------- */
