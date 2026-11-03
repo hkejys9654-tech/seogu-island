@@ -425,9 +425,12 @@ function zoneBell(g){
 function zoneBus(g){
   const ring=new THREE.Mesh(new THREE.RingGeometry(3.9,4.9,40),M(0x9aa1a7,{side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=.06;g.add(ring);
   for(let k=0;k<20;k++){const a=k/20*Math.PI*2,d=box(.08,.02,.45,0xffffff,Math.sin(a)*4.4,.075,Math.cos(a)*4.4,g);d.rotation.y=a;}
-  box(2.8,1.7,2.2,0xfff7e8,0,.85,-.2,g);box(3.1,.18,2.5,0xd97706,0,1.79,-.2,g);box(1.2,1,.06,0x6f8796,0,.5,.92,g);
-  const sTex=canvasTex(512,112,(x,w,h)=>{x.fillStyle="#d97706";x.fillRect(0,0,w,h);x.fillStyle="#fff";x.font='bold 58px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("정미니 아일랜드",w/2,h/2+4);});
-  box(3,.66,.1,0xb45f06,0,2.3,.4,g);const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.86,.6),new THREE.MeshBasicMaterial({map:sTex}));sg.position.set(0,2.3,.46);g.add(sg);
+  box(3.6,1.7,2.2,0xfff7e8,0,.85,-.2,g);box(3.9,.18,2.5,0xd97706,0,1.79,-.2,g);box(1.2,1,.06,0x6f8796,0,.5,.92,g);
+  const sTex=canvasTex(768,112,(x,w,h)=>{x.fillStyle="#d97706";x.fillRect(0,0,w,h);x.fillStyle="#fff";x.font='bold 54px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("서구청 출근버스 위치조회",w/2,h/2+4);});
+  box(4.3,.66,.1,0xb45f06,0,2.3,.4,g);const sg=new THREE.Mesh(new THREE.PlaneGeometry(4.16,.6),new THREE.MeshBasicMaterial({map:sTex}));sg.position.set(0,2.3,.46);g.add(sg);
+  // 섬 입구 나무 표지판: 정미니 아일랜드
+  const nTex=canvasTex(384,96,(x,w,h)=>{x.fillStyle="#f6e7c8";x.fillRect(0,0,w,h);x.strokeStyle="#8a6440";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#6b4a2b";x.font='bold 44px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("정미니 아일랜드",w/2,h/2+3);});
+  box(.1,1.1,.1,0x8a6440,-1.1,.55,6.5,g);box(1.5,.42,.08,0x8a6440,-1.1,1.05,6.5,g);const ns=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:nTex}));ns.position.set(-1.1,1.05,6.55);g.add(ns);
   // 정류장(지붕 + 기둥 + 둥근 표지판)
   const st=new THREE.Group();st.position.set(-2.3,0,5.4);g.add(st);box(1.6,.08,.8,0x14866d,0,1.45,0,st);[-.7,.7].forEach(x=>box(.06,1.4,.06,0x5d6770,x,.7,-.3,st));box(1.4,.08,.3,0xe9e4da,0,.45,-.2,st);
   cyl(.05,.05,1.9,0x5d6770,1.05,.95,.2,st,6);const sign=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.05,16),M(0xd97706));sign.rotation.x=Math.PI/2;sign.position.set(1.05,1.9,.2);st.add(sign);
@@ -488,7 +491,7 @@ const LOCAL_OBST={
   safety:[[-1.1,0,.5],[-.35,0,.5],[.35,0,.5],[1.1,0,.5],[-2.2,1.6,.3],[2.3,1.2,.3],[1.6,-2,.3],[-1,1.8,.3],[-.4,2.1,.3],[.6,1.9,.3]],
   store:[[-1.95,-.8,1],[0,-.8,1],[1.95,-.8,1],[0,1.07,.35],[-2.9,1.3,.3],[2.9,1.3,.3],[-1,1.6,.3],[1,1.8,.3]],
   family:[[-1.8,-1.2,1.15],[1.8,-1.4,1.15],[-1.6,1.8,1.15],[1.9,1.6,1.15],[0,0,.5],[-.5,.4,.3],[.5,.3,.3]],
-  bus:[[0,-.2,1.6],[-2.3,5.1,.6]],
+  bus:[[-.9,-.2,1.3],[.9,-.2,1.3],[-2.3,5.1,.6],[-1.1,6.5,.15]],
   bell:[[-2,-1.6,1.1],[-2,1.2,1.15],[2,-1,1.15],[2,1.8,1],[-.95,-2.6,.2],[.95,-.4,.2],[-.95,1.6,.2],[.95,3,.2],[.2,-1.4,.3]]};
 {const v=new THREE.Vector3();ZONES.forEach(z=>LOCAL_OBST[z.p.key].forEach(([x,y,r])=>{v.set(x,0,y);z.group.localToWorld(v);OBST.push({x:v.x,z:v.z,r,h:r>.9?4.6:0});}));}
 OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0});OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1}));TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
