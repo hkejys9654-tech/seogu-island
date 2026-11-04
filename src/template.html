@@ -887,7 +887,9 @@ addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 /* ---------- daily news for the banners ---------- */
 function applyNews(){banners.forEach((m,k)=>{const old=m.material.map;m.material.map=bannerTex((NEWS.items||[])[k],k);m.material.needsUpdate=true;if(old)old.dispose();});if(focus===HALL_I)fillHallCard();requestRender();}
 applyNews();
-if(location.protocol.startsWith("http"))fetch("./news.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(d&&Array.isArray(d.items)&&d.items.length){NEWS=d;applyNews();}}).catch(()=>{});
+// 현수막 뉴스: 이 저장소의 news.json 과 예전 경로(seogu-bapsang/island/news.json) 중 더 최신 것을 씁니다
+if(location.protocol.startsWith("http")){const getNews=u=>fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null);
+  Promise.all([getNews("./news.json"),getNews("/seogu-bapsang/island/news.json")]).then(ds=>{const ok=ds.filter(d=>d&&Array.isArray(d.items)&&d.items.length).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)));if(ok[0]&&String(ok[0].updated)>=String(NEWS.updated||"")){NEWS=ok[0];applyNews();}});}
 /* ---------- intro: 하늘 높이에서 구름을 뚫고 내려와 서구청 앞에 멈춤(누르면 건너뜀) ---------- */
 const INTRO={on:false,t0:0,dur:3800,to:null};
 function sstep(x){x=clamp(x,0,1);return x*x*(3-2*x);}
