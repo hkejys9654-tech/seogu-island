@@ -8,3 +8,7 @@ news = json.dumps(json.loads((root / "news.json").read_text(encoding="utf-8")), 
 t = t.replace("__HAEON__", haeon).replace("__NEWS__", news).replace("</style>\n", "</style>\n</head>\n<body>\n", 1)
 (root / "index.html").write_text((src / "head.html").read_text(encoding="utf-8") + t + "\n</body>\n</html>\n", encoding="utf-8")
 print("built", len(t))
+# 함께가게 소개 페이지(개인정보 없는 공개 화면): src/store.html → store/index.html
+(root / "store").mkdir(exist_ok=True)
+(root / "store" / "index.html").write_text((src / "store.html").read_text(encoding="utf-8").replace("__HAEON_WAVE__", json.loads((src / "haeon.json").read_text(encoding="utf-8"))["wave"]), encoding="utf-8")
+print("built store page")
