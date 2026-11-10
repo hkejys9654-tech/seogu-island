@@ -143,12 +143,12 @@ window.SKY=(function(){
   var SUN=[[460,1065],[437,1094],[402,1119],[361,1142],[328,1166],[318,1187],[329,1187],[351,1161],[373,1120],[395,1080],[422,1047],[447,1041]];
   /* top·bot 하늘 위아래, fog 먼 곳 색, hs·hg·hi 하늘빛, sc·si·sx·sy·sz 해(달)빛과 방향, night 불빛 세기, star 별, sh 그림자 진하기 */
   var PAL={
-    day:{top:0x9fd8f2,bot:0xe9f7fb,fog:0xdff2f8,hs:0xffffff,hg:0x8fb98a,hi:.85,sc:0xfff1dc,si:.75,sx:30,sy:50,sz:20,night:0,star:0,sh:.34,foam:0xffffff,water:0x1f7a99,dark:0},
-    dawn:{top:0x8fb8e8,bot:0xffdcc8,fog:0xf6ddd0,hs:0xffeadc,hg:0x8fa58a,hi:.8,sc:0xffc9a0,si:.62,sx:48,sy:17,sz:16,night:.3,star:0,sh:.24,foam:0xfff3ea,water:0x2a7f97,dark:0},
-    dusk:{top:0x6f86c9,bot:0xffb98a,fog:0xf3bfa0,hs:0xffd9bd,hg:0x8a8478,hi:.76,sc:0xff9455,si:.72,sx:-48,sy:15,sz:18,night:.55,star:0,sh:.26,foam:0xffe6d4,water:0x256f8c,dark:0},
-    night:{top:0x0e1a3c,bot:0x2c4272,fog:0x263a66,hs:0xa3b6f0,hg:0x33426a,hi:.74,sc:0xb8c8ff,si:.34,sx:-22,sy:45,sz:26,night:1,star:1,sh:.14,foam:0x8fa3c8,water:0x0f3550,dark:1}};
+    day:{top:0x9fd8f2,bot:0xe9f7fb,fog:0xdff2f8,hs:0xffffff,hg:0x8fb98a,hi:.85,sc:0xfff1dc,si:.75,sx:30,sy:50,sz:20,night:0,star:0,sh:.34,foam:0xffffff,water:0x1f7a99,sea:0x56b9d8,dark:0},
+    dawn:{top:0x8fb8e8,bot:0xffdcc8,fog:0xf6ddd0,hs:0xffeadc,hg:0x8fa58a,hi:.8,sc:0xffc9a0,si:.62,sx:48,sy:17,sz:16,night:.3,star:0,sh:.24,foam:0xfff3ea,water:0x2a7f97,sea:0x5cb4cf,dark:0},
+    dusk:{top:0x6f86c9,bot:0xffb98a,fog:0xf3bfa0,hs:0xffd9bd,hg:0x8a8478,hi:.76,sc:0xff9455,si:.72,sx:-48,sy:15,sz:18,night:.55,star:0,sh:.26,foam:0xffe6d4,water:0x256f8c,sea:0x4d9cbd,dark:0},
+    night:{top:0x0e1a3c,bot:0x2c4272,fog:0x263a66,hs:0xa3b6f0,hg:0x33426a,hi:.74,sc:0xb8c8ff,si:.34,sx:-22,sy:45,sz:26,night:1,star:1,sh:.14,foam:0x8fa3c8,water:0x0f3550,sea:0x2a6690,dark:1}};
   function mixC(a,b,t){var r=(a>>16&255)+((b>>16&255)-(a>>16&255))*t,g=(a>>8&255)+((b>>8&255)-(a>>8&255))*t,l=(a&255)+((b&255)-(a&255))*t;return Math.round(r)<<16|Math.round(g)<<8|Math.round(l);}
-  function mix(a,b,t){var o={},k;for(k in a)o[k]=k==="top"||k==="bot"||k==="fog"||k==="hs"||k==="hg"||k==="sc"||k==="foam"||k==="water"?mixC(a[k],b[k],t):a[k]+(b[k]-a[k])*t;return o;}
+  function mix(a,b,t){var o={},k;for(k in a)o[k]=k==="top"||k==="bot"||k==="fog"||k==="hs"||k==="hg"||k==="sc"||k==="foam"||k==="water"||k==="sea"?mixC(a[k],b[k],t):a[k]+(b[k]-a[k])*t;return o;}
   var forced=(/[?&]sky=(day|dawn|dusk|night)/.exec(location.search)||[])[1];
   function now(){
     if(forced)return mix(PAL[forced],PAL[forced],0);
@@ -1101,7 +1101,7 @@ function requestRender(){if(!rafId)rafId=requestAnimationFrame(frame);}
 /* ---------- 하늘: 시각에 맞춰 빛·안개·창문 불빛·별·그림자를 바꿈(1분마다 다시 계산) ---------- */
 function applySky(){const p=SKY.now();SKY.cur=p;SKY.css(p);
   airFog.color.setHex(p.fog);waterFog.color.setHex(p.water);hemi.color.setHex(p.hs);hemi.groundColor.setHex(p.hg);hemi.intensity=p.hi;sun.color.setHex(p.sc);sun.intensity=p.si;sun.position.set(p.sx,p.sy,p.sz);
-  WIN.emissiveIntensity=p.night;front.material.emissiveIntensity=p.night*.9;HALO.opacity=p.night*.75;HALOS.forEach(s=>s.visible=p.night>.02);foam.material.color.setHex(p.foam);
+  WIN.emissiveIntensity=p.night;front.material.emissiveIntensity=p.night*.9;HALO.opacity=p.night*.75;HALOS.forEach(s=>s.visible=p.night>.02);foam.material.color.setHex(p.foam);seaMat.color.setHex(p.sea);
   starMat.opacity=p.star;moonMat.opacity=p.star;skyDome.visible=p.star>.02;layShadows(p);
   if(wasUnder)renderer.setClearColor(waterFog.color,1);}
 applySky();setInterval(()=>{applySky();requestRender();},60000);
