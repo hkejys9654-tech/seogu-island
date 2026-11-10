@@ -33,6 +33,8 @@ button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .pin i{display:grid;place-items:center;width:24px;height:24px;border-radius:999px;color:#fff;font-style:normal;font-family:var(--display);font-size:14px}
 .pin::after{content:"";position:absolute;left:50%;bottom:-6px;width:10px;height:10px;background:#fff;transform:translateX(-50%) rotate(45deg);border-radius:2px;z-index:-1}
 .pin.dim{opacity:.35}.pin.hidden{opacity:0;pointer-events:none}
+/* 폰: 이름표 대신 숫자 동그라미만(겹치지 않게). 누르면 이름이 담긴 카드가 열림 */
+.pin.mini{padding:5px;gap:0}.pin.mini span{display:none}.pin.mini i{width:30px;height:30px;font-size:16px}
 
 .hint{position:fixed;z-index:4;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);padding:8px 14px;border-radius:999px;background:rgba(35,48,59,.72);color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;transition:opacity .4s}
 .credit{position:fixed;z-index:4;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);font-size:11px;letter-spacing:.04em;color:var(--credit,rgba(35,48,59,.45));pointer-events:none}
@@ -825,10 +827,17 @@ function placeCamera(){if(Math.abs(rig.ox)>0.5||Math.abs(rig.oy)>0.5)camera.setV
 const zoneBy={};ZONES.forEach(z=>zoneBy[z.p.key]=z);
 /* ---------- labels ---------- */
 const HALL={x:HX,z:HZ+1.2,p:{name:"광주 서구청",color:"#1f3a5f"},ring:{material:{opacity:0}},group:hall,top:9};
-const pins=ZONES.map((z,i)=>{const b=document.createElement("button");b.className="pin";b.type="button";b.innerHTML=`<i style="background:${z.p.color}">${i+1}</i>${z.p.name}`;b.onclick=()=>openZone(i);$("pins").appendChild(b);return b;});
-const hallPin=document.createElement("button");hallPin.className="pin";hallPin.type="button";hallPin.innerHTML='<i style="background:#1f3a5f">★</i>광주 서구청';hallPin.onclick=()=>openZone(HALL_I);$("pins").appendChild(hallPin);pins.push(hallPin);
+const pins=ZONES.map((z,i)=>{const b=document.createElement("button");b.className="pin";b.type="button";b.innerHTML=`<i style="background:${z.p.color}">${i+1}</i><span>${z.p.name}</span>`;b.setAttribute("aria-label",z.p.name);b.onclick=()=>openZone(i);$("pins").appendChild(b);return b;});
+const hallPin=document.createElement("button");hallPin.className="pin";hallPin.type="button";hallPin.innerHTML='<i style="background:#1f3a5f">★</i><span>광주 서구청</span>';hallPin.setAttribute("aria-label","광주 서구청");hallPin.onclick=()=>openZone(HALL_I);$("pins").appendChild(hallPin);pins.push(hallPin);
 const tmp=new THREE.Vector3();
-function updatePins(){[...ZONES,HALL].forEach((z,i)=>{tmp.set(z.x,z.top||6.4*(z.sc||1),z.z).project(camera);const vis=tmp.z<1&&(!walking||(Math.abs(tmp.x)<1.05&&(-tmp.y*0.5+0.5)*innerHeight>110));const b=pins[i],half=(b.offsetWidth||120)/2+8,px=Math.max(half,Math.min(innerWidth-half,(tmp.x*0.5+0.5)*innerWidth));b.style.transform=`translate(${px}px,${(-tmp.y*0.5+0.5)*innerHeight}px) translate(-50%,-100%)`;b.classList.toggle("hidden",!vis);b.classList.toggle("dim",focus>=0&&focus!==i);if(focus>=0&&focus!==i&&innerWidth<760)b.classList.add("hidden");});}
+function updatePins(){const small=innerWidth<760,list=[];
+  [...ZONES,HALL].forEach((z,i)=>{tmp.set(z.x,z.top||6.4*(z.sc||1),z.z).project(camera);const vis=tmp.z<1&&(!walking||(Math.abs(tmp.x)<1.05&&(-tmp.y*0.5+0.5)*innerHeight>110));
+    const b=pins[i],mini=small&&focus!==i&&!(walking&&Math.hypot(P.x-z.x,P.z-z.z)<14);b.classList.toggle("mini",mini);
+    const half=(b.offsetWidth||120)/2+8;list.push({b,i,mini,vis,half,x:Math.max(half,Math.min(innerWidth-half,(tmp.x*0.5+0.5)*innerWidth)),y:(-tmp.y*0.5+0.5)*innerHeight});});
+  /* 숫자 동그라미끼리 포개지면 서로 조금씩 밀어냄 */
+  const dots=list.filter(q=>q.mini&&q.vis&&!(focus>=0&&focus!==q.i));
+  for(let n=0;n<4;n++)for(let a=0;a<dots.length;a++)for(let c=a+1;c<dots.length;c++){const A=dots[a],B2=dots[c];let dx=B2.x-A.x,dy=B2.y-A.y,d=Math.hypot(dx,dy);if(d>=46)continue;if(d<.01){dx=1;dy=0;d=1;}const k=(46-d)/2/d;A.x-=dx*k;A.y-=dy*k;B2.x+=dx*k;B2.y+=dy*k;}
+  list.forEach(q=>{const b=q.b;if(q.mini)q.x=Math.max(q.half,Math.min(innerWidth-q.half,q.x));b.style.transform=`translate(${q.x}px,${q.y}px) translate(-50%,-100%)`;b.classList.toggle("hidden",!q.vis);b.classList.toggle("dim",focus>=0&&focus!==q.i);if(focus>=0&&focus!==q.i&&small)b.classList.add("hidden");});}
 
 /* ---------- card ---------- */
 function fillCard(i){
@@ -1142,14 +1151,15 @@ applyNews();
 if(location.protocol.startsWith("http")){const getNews=u=>fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null);
   Promise.all([getNews("./news.json"),getNews("/seogu-bapsang/island/news.json")]).then(ds=>{const ok=ds.filter(d=>d&&Array.isArray(d.items)&&d.items.length).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)));if(ok[0]&&String(ok[0].updated)>=String(NEWS.updated||"")){NEWS=ok[0];applyNews();}});}
 /* ---------- intro: 하늘 높이에서 구름을 뚫고 내려와 서구청 앞에 멈춤(누르면 건너뜀) ---------- */
+function overHint(){return innerWidth<760?"섬을 끌어서 돌려보고, 숫자를 눌러보세요":"섬을 끌어서 돌려보고, 이름표를 눌러보세요";}
 const INTRO={on:false,t0:0,dur:3800,to:null};
 function sstep(x){x=clamp(x,0,1);return x*x*(3-2*x);}
 function introPose(u){const to=INTRO.to||hallView(),io=u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
   return {tx:to.tx,ty:to.ty,tz:to.tz,ox:0,oy:0,dist:160+(to.dist-160)*io,el:1.5+(to.el-1.5)*sstep((u-.3)/.7),az:to.az+1.1*(1-sstep(u))};}
-function startIntro(){INTRO.to=hallView();if(reduce){Object.assign(rig,INTRO.to);Object.assign(goal,INTRO.to);showHint("섬을 끌어서 돌려보고, 이름표를 눌러보세요",6000);requestRender();return;}
+function startIntro(){INTRO.to=hallView();if(reduce){Object.assign(rig,INTRO.to);Object.assign(goal,INTRO.to);showHint(overHint(),6000);requestRender();return;}
   INTRO.on=true;INTRO.t0=-250;$("enterBtn").hidden=true;introClouds.visible=true;renderer.compile(scene,camera);introMat.opacity=.95;$("pins").classList.add("off");requestRender();}
 function endIntro(){if(!INTRO.on)return;INTRO.on=false;introClouds.visible=false;const v=INTRO.to||hallView();Object.assign(rig,v);Object.assign(goal,v);
-  $("pins").classList.remove("off");$("enterBtn").hidden=walking||focus>=0||!$("list").hidden;showHint("섬을 끌어서 돌려보고, 이름표를 눌러보세요",6000);startTween();}
+  $("pins").classList.remove("off");$("enterBtn").hidden=walking||focus>=0||!$("list").hidden;showHint(overHint(),6000);startTween();}
 function stepIntro(dt){INTRO.t0+=Math.min(dt,1/30)*1000;const u=clamp(INTRO.t0/INTRO.dur,0,1);Object.assign(rig,introPose(u));introMat.opacity=.95*(1-sstep((u-.82)/.18));placeCamera();if(u>=1)endIntro();}
 $("hint").style.opacity=0;$("pins").classList.add("off");
 INTRO.to=hallView();Object.assign(rig,introPose(0));placeCamera();
