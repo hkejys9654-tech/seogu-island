@@ -377,7 +377,8 @@ ZONES.forEach(z=>NODES[nodeOf[z.p.key]].end=z.ry+Math.PI);// 길 끝에서는 �
 Object.keys(PN).forEach(k=>{if(!["hub","bus","seoguon","jomok","chaeng","jeongri"].includes(k))cyl(1,1,.1,0xe9dcc0,PN[k][0],.91,PN[k][1],null,14);});
 cyl(3.2,3.2,0.14,0xe9dcc0,HX,0.95,HZ,null,20);
 /* 가로등: 길목 다섯 곳 옆 빈 자리에 세워 밤에 불을 밝힘 */
-const LAMP_AT=["w1","e1","e3","b1","jP","dA"].map(k=>{let best=null,bd=-1;for(let i=0;i<8;i++){const a=i*Math.PI/4+.4,x=PN[k][0]+Math.cos(a)*1.7,z=PN[k][1]+Math.sin(a)*1.7;let d=1e9;for(const q of PATH_PTS)d=Math.min(d,Math.hypot(x-q.x,z-q.z));if(d>bd){bd=d;best=[x,z];}}return best;});
+const LAMP_AT=["w1","e1","e3","b1","jP","dA"].map(k=>{let best=null,bd=-1;for(let i=0;i<8;i++){const a=i*Math.PI/4+.4,x=PN[k][0]+Math.cos(a)*1.7,z=PN[k][1]+Math.sin(a)*1.7;
+  if(!(rhoAt(x,z)<.84||ISLES.some(I=>rhoI(I,x,z)<.8))||BRIDGES.some(Br=>bridgeDist(Br,x,z).d<1.7))continue;/* 땅 위, 다리에서 떨어진 곳만 */let d=1e9;for(const q of PATH_PTS)d=Math.min(d,Math.hypot(x-q.x,z-q.z));if(d>bd){bd=d;best=[x,z];}}return best;}).filter(Boolean);
 LAMP_AT.forEach(([x,z])=>{const l=new THREE.Group();l.position.set(x,3.02,z);scene.add(l);LAMPS.push(l);});
 
 /* ---------- 작은 섬 땅 + 다리(정미니: 나무다리, 저스티스: 중세 돌다리) ---------- */
@@ -568,7 +569,7 @@ function zoneBus(g){
   box(4.3,.66,.1,0xb45f06,0,2.3,.4,g);const sg=new THREE.Mesh(new THREE.PlaneGeometry(4.16,.6),new THREE.MeshBasicMaterial({map:sTex}));sg.position.set(0,2.3,.46);g.add(sg);
   // 섬 입구 나무 표지판: 정미니 아일랜드
   const nTex=canvasTex(384,96,(x,w,h)=>{x.fillStyle="#f6e7c8";x.fillRect(0,0,w,h);x.strokeStyle="#8a6440";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#6b4a2b";x.font='bold 44px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("정미니 아일랜드",w/2,h/2+3);});
-  box(.1,1.1,.1,0x8a6440,-1.1,.55,6.5,g);box(1.5,.42,.08,0x8a6440,-1.1,1.05,6.5,g);const ns=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:nTex}));ns.position.set(-1.1,1.05,6.55);g.add(ns);
+  [-1.92,-.28].forEach(x=>box(.09,1.27,.09,0x8a6440,x,.635,6.5,g));box(1.5,.42,.08,0x8a6440,-1.1,1.05,6.5,g);const ns=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:nTex}));ns.position.set(-1.1,1.05,6.55);g.add(ns);
   // 정류장(지붕 + 기둥 + 둥근 표지판)
   const st=new THREE.Group();st.position.set(-2.3,0,5.4);g.add(st);box(1.6,.08,.8,0x14866d,0,1.45,0,st);[-.7,.7].forEach(x=>box(.06,1.4,.06,0x5d6770,x,.7,-.3,st));box(1.4,.08,.3,0xe9e4da,0,.45,-.2,st);
   cyl(.05,.05,1.9,0x5d6770,1.05,.95,.2,st,6);const sign=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.05,16),M(0xd97706));sign.rotation.x=Math.PI/2;sign.position.set(1.05,1.9,.2);st.add(sign);
@@ -586,7 +587,7 @@ function zoneBus(g){
   const top=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),M(GOLD));top.position.y=3.2;g.add(top);g.userData.beam=beam;JC.statue=g;
   const jTex=canvasTex(448,96,(x,w,h)=>{x.fillStyle="#e9e4da";x.fillRect(0,0,w,h);x.strokeStyle="#8a8174";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#4a443c";x.font='bold 42px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("저스티스 아일랜드",w/2,h/2+3);});
   const sg=new THREE.Group();sg.position.set(JB.B.x+Math.cos(JRY)*1.9,.9,JB.B.z-Math.sin(JRY)*1.9);sg.rotation.y=JRY;scene.add(sg);JC.sign=sg;
-  box(.2,2.2,.2,0x9e978b,0,1.1,-.17,sg);box(2.45,.64,.12,0x9e978b,0,2.4,0,sg);const js=new THREE.Mesh(new THREE.PlaneGeometry(2.32,.54),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(0,2.4,.07);sg.add(js);}
+  [-1.33,1.33].forEach(x=>box(.18,2.72,.18,0x9e978b,x,1.36,0,sg));box(2.45,.64,.12,0x9e978b,0,2.4,0,sg);const js=new THREE.Mesh(new THREE.PlaneGeometry(2.32,.54),new THREE.MeshBasicMaterial({map:jTex}));js.position.set(0,2.4,.07);sg.add(js);}
 function signPlate(g,text,color,w,y,z){const tx=canvasTex(512,96,(x,cw,ch)=>{x.fillStyle=color;x.fillRect(0,0,cw,ch);x.fillStyle="#fff";x.font='bold 50px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText(text,cw/2,ch/2+3);});
   const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w*96/512),new THREE.MeshBasicMaterial({map:tx}));m.position.set(0,y,z);g.add(m);return m;}
 /* ---------- zone 7: 서구:온 디지털트윈 (빛나는 3D 도시 모형) ---------- */
@@ -631,7 +632,7 @@ function zoneJeongri(g){
   [[-2.5,1.5],[-1.85,1.9]].forEach(([x,z],k)=>{for(let i=0;i<4-k;i++){const s=box(.66,.1,.5,i%2?0xfffdf5:0xffffff,x,.16+i*.1,z,g);s.rotation.y=(i%2?.18:-.1)+k*.3;}});
   // 섬 입구 표지판: 다비치 아일랜드
   const dTex=canvasTex(384,96,(x,w,h)=>{x.fillStyle="#eef0fd";x.fillRect(0,0,w,h);x.strokeStyle="#5b6cf0";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#3f4bb8";x.font='bold 44px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("다비치 아일랜드",w/2,h/2+3);});
-  box(.1,1.1,.1,0x8a6440,-1.4,.55,5.9,g);box(1.5,.42,.08,0x8a6440,-1.4,1.05,5.9,g);const ds=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:dTex}));ds.position.set(-1.4,1.05,5.95);g.add(ds);
+  [-2.22,-.58].forEach(x=>box(.09,1.27,.09,0x8a6440,x,.635,5.9,g));box(1.5,.42,.08,0x8a6440,-1.4,1.05,5.9,g);const ds=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:dTex}));ds.position.set(-1.4,1.05,5.95);g.add(ds);
   person(-1.2,2.3,g,0x5b6cf0);person(.9,2.5,g,0xffffff);
 }
 const glowTex=canvasTex(64,64,(x,w,h)=>{const r=x.createRadialGradient(32,32,2,32,32,32);r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=r;x.fillRect(0,0,w,h);});
@@ -731,15 +732,15 @@ const LOCAL_OBST={
   safety:[[-1.1,0,.5],[-.35,0,.5],[.35,0,.5],[1.1,0,.5],[-2.2,1.6,.3],[2.3,1.2,.3],[1.6,-2,.3],[-1,1.8,.3],[-.4,2.1,.3],[.6,1.9,.3]],
   store:[[-1.95,-.8,1],[0,-.8,1],[1.95,-.8,1],[0,1.07,.35],[-2.9,1.3,.3],[2.9,1.3,.3],[-1,1.6,.3],[1,1.8,.3]],
   family:[[-1.8,-1.2,1.15],[1.8,-1.4,1.15],[-1.6,1.8,1.15],[1.9,1.6,1.15],[0,0,.5],[-.5,.4,.3],[.5,.3,.3]],
-  bus:[[-.9,-.2,1.3],[.9,-.2,1.3],[-2.3,5.1,.6],[-1.1,6.5,.15]],
+  bus:[[-.9,-.2,1.3],[.9,-.2,1.3],[-2.3,5.1,.6],[-1.92,6.5,.15],[-.28,6.5,.15]],
   seoguon:[[-1.3,-.6,1.3],[1.1,-.6,1.3],[0,1.1,.9],[-1.6,2.4,.3]],
   jomok:[[-1.1,-.6,1.4],[1.1,-.6,1.4],...[-1.5,-.5,.5,1.5].map(x=>[x,1.1,.25]),[0,2.2,.4],[1.3,2.6,.3]],
   chaeng:[[-1.1,-.4,1.4],[1.1,-.4,1.4],[-.95,2,.5],[1.2,2.4,.3]],
-  jeongri:[[-1.1,-1,1.4],[1.1,-1,1.4],[2.45,1.7,.75],[-2.2,1.7,.5],[-1.2,2.3,.3],[.9,2.5,.3],[-1.4,5.9,.15]],
+  jeongri:[[-1.1,-1,1.4],[1.1,-1,1.4],[2.45,1.7,.75],[-2.2,1.7,.5],[-1.2,2.3,.3],[.9,2.5,.3],[-2.22,5.9,.15],[-.58,5.9,.15]],
   bell:[[-2,-1.6,1.1,2.6],[-2,1.2,1.15,3.2],[2,-1,1.15,2.2],[2,1.8,1,2.8],[-.95,-2.6,.2],[.95,-.4,.2],[-.95,1.6,.2],[.95,3,.2],[.2,-1.4,.3]]};
 {const v=new THREE.Vector3();ZONES.forEach(z=>LOCAL_OBST[z.p.key].forEach(([x,y,r,tp])=>{v.set(x,0,y);z.group.localToWorld(v);const rt=r>.9?(tp!==undefined?tp:ROOF_TOP[z.p.key]):0;OBST.push({x:v.x,z:v.z,r:r*z.sc,h:r>.9?4.6*z.sc:0,top:rt?.9+rt*z.sc:0});}));}
 PIER.posts.forEach(q=>OBST.push({x:q.x,z:q.z,r:.16,h:0,top:q.y}));[boat,sail].forEach(b=>OBST.push({x:b.position.x,z:b.position.z,r:1.25,h:0,top:.08,sr:1.1}));
-LAMP_AT.forEach(([x,z])=>OBST.push({x,z,r:.15,h:0}));OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0},{x:JC.x,z:JC.z,r:1.25,h:4.3},{x:JC.sign.position.x,z:JC.sign.position.z,r:.15,h:0});OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1,top:.9+r*.62,sr:r*.4}));OBST.push({x:HX,z:HZ-1.6,r:1.25,h:7,top:7.6});TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
+LAMP_AT.forEach(([x,z])=>OBST.push({x,z,r:.15,h:0}));OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0},{x:JC.x,z:JC.z,r:1.25,h:4.3},...[-1.33,1.33].map(lx=>({x:JC.sign.position.x+Math.cos(JRY)*lx,z:JC.sign.position.z-Math.sin(JRY)*lx,r:.18,h:0})));OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1,top:.9+r*.62,sr:r*.4}));OBST.push({x:HX,z:HZ-1.6,r:1.25,h:7,top:7.6});TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
 function collide(p,r,y,fly){y=y||0;
   for(const o of OBST){if(o.top?y>=o.top-.05:y>(o.h>0?.9+o.h:o.r<=.35?1.9:4.6))continue;const dx=p.x-o.x,dz=p.z-o.z,d=Math.hypot(dx,dz),m=o.r+r;if(d<m&&d>1e-4){p.x=o.x+dx/d*m;p.z=o.z+dz/d*m;}}
   for(const b of RECTS){if(y>=(b.top||.9+b.h)-.05)continue;const cx=clamp(p.x,b.x0,b.x1),cz=clamp(p.z,b.z0,b.z1),dx=p.x-cx,dz=p.z-cz,d=Math.hypot(dx,dz);
