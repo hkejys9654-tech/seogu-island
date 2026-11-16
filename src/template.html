@@ -330,14 +330,17 @@ function Rk(I,a){return I.r*(1+.05*Math.sin(3*a+I.s[0])+.03*Math.sin(5*a+I.s[1])
 function rhoI(I,x,z){const dx=x-I.x,dz=z-I.z;return Math.hypot(dx,dz)/Rk(I,Math.atan2(dz,dx));}
 function marchBridge(I,T){const dx=T.x-I.x,dz=T.z-I.z,L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L;let s=0;while(rhoI(I,I.x+ux*s,I.z+uz*s)<.82)s+=.05;const B={x:I.x+ux*s,z:I.z+uz*s};while(rhoAt(I.x+ux*s,I.z+uz*s)>.8)s+=.05;return {A:{x:I.x+ux*s,z:I.z+uz*s},B,ry:Math.atan2(ux,uz)};}
 const JB=marchBridge(JC,{x:-9,z:-8}),JRY=JB.ry;// 저스티스 아일랜드의 앞쪽(다리 쪽) 방향
-const DB=marchBridge(DC,{x:-22,z:8});
+/* 다비치 아일랜드는 절벽 없는 모래 해수욕장: 가운데(0.6R까지) 평평하고, 바다 쪽으로 완만하게 내려가 물에 잠김 */
+function beachH(ri){if(ri<=.6)return .9;if(ri<=1.02){const u=(ri-.6)/.42,s=u*u*(3-2*u);return .9-s*1.65;}const u=Math.min(1,(ri-1.02)/.45),s=u*u*(3-2*u);return -.75+(SEABED-.1+.75)*s;}
+function marchBridgeR(I,T,thr){const dx=T.x-I.x,dz=T.z-I.z,L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L;let s=0;while(rhoI(I,I.x+ux*s,I.z+uz*s)<thr)s+=.05;const B={x:I.x+ux*s,z:I.z+uz*s};while(rhoAt(I.x+ux*s,I.z+uz*s)>.8)s+=.05;return {A:{x:I.x+ux*s,z:I.z+uz*s},B,ry:Math.atan2(ux,uz)};}
+const DB=marchBridgeR(DC,{x:-22,z:8},.6);// 다리는 평평한 모래 위에서 시작
 const BRIDGES=[{A:{x:20.4,z:-8.3},B:{x:28.1,z:-14.8},stone:false},{A:JB.A,B:JB.B,stone:true},{A:DB.A,B:DB.B,stone:false}];
 function jl(lx,lz,lry,reach){const c=Math.cos(JRY),s=Math.sin(JRY);return [JC.x+lx*c+lz*s,JC.z-lx*s+lz*c,lry+JRY,reach,1.3];}// 섬 기준 좌표 → 지도 좌표
 /* ---------- 배치: 십자 모양 대신 섬 곳곳에 흩어진 건물과 구불구불한 길 ---------- */
 const HX=-4,HZ=-3;// 광주 서구청(가운데에서 살짝 서쪽)
 // x, z, 건물 앞쪽 방향, 앞쪽 길이 닿는 거리
 const LAYOUT={bapsang:[5,-3,.25,6.6],safety:[-21,-4,1.25,5.4],store:[23,3,-1.9,5.4],family:[-12,8,2.46,5.4],bell:[14,-8,-.75,5.4],bus:[33,-19,-.869,5.8],
-  seoguon:jl(-8.6,-1.6,1.39,4.4),jomok:jl(0,-8.6,0,4.4),chaeng:jl(8.6,-1.6,-1.39,4.4),jeongri:[DC.x,DC.z,DB.ry,7.4]};
+  seoguon:jl(-8.6,-1.6,1.39,4.4),jomok:jl(0,-8.6,0,4.4),chaeng:jl(8.6,-1.6,-1.39,4.4),jeongri:[DC.x,DC.z,DB.ry,6.2]};
 const ZONES=PROJECTS.map(p=>{const [x,z,ry,reach,sc]=LAYOUT[p.key],fx=Math.sin(ry),fz=Math.cos(ry);return {x,z,ry,fx,fz,ex:x+fx*reach,ez:z+fz*reach,sc:sc||1,p};});
 const PN={dA:[DB.A.x,DB.A.z],br0:[20.4,-8.3],jA:[JB.A.x,JB.A.z],jB:[JB.B.x,JB.B.z],jP:[JC.x+Math.sin(JRY)*4.6,JC.z+Math.cos(JRY)*4.6],hub:[HX,HZ+3.6],w1:[-9.5,1.4],w2:[-13.4,-.6],e1:[2.2,3.4],e2:[8.6,4.4],e3:[13.6,3.4],b1:[9.6,.2]};
 ZONES.forEach(z=>PN[z.p.key]=[z.ex,z.ez]);
@@ -367,7 +370,16 @@ LAMP_AT.forEach(([x,z])=>{const l=new THREE.Group();l.position.set(x,3.02,z);sce
 /* ---------- 작은 섬 땅 + 다리(정미니: 나무다리, 저스티스: 중세 돌다리) ---------- */
 function blobShape(I,f){const s=new THREE.Shape();for(let i=0;i<=72;i++){const a=i/72*Math.PI*2,r=Rk(I,a)*f,x=I.x+Math.cos(a)*r,z=I.z+Math.sin(a)*r;i?s.lineTo(x,-z):s.moveTo(x,-z);}return s;}
 function slabS(shape,depth,top,mat){const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,curveSegments:1});g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.y=top-depth;scene.add(m);return m;}
-ISLES.forEach(I=>{slabS(blobShape(I,1.12),.02,-.55,foam.material);slabS(blobShape(I,1),6.1,.35,M(0xf1dfae));slabS(blobShape(I,.9),1.2,.9,M(0x84c46a));});
+ISLES.forEach(I=>{if(I===DC)return;slabS(blobShape(I,1.12),.02,-.55,foam.material);slabS(blobShape(I,1),6.1,.35,M(0xf1dfae));slabS(blobShape(I,.9),1.2,.9,M(0x84c46a));});
+{const RS=[0,.3,.5,.6,.66,.72,.78,.84,.9,.96,1.02,1.1,1.2,1.32,1.47],NA=72,pos=[],col=[],idx=[],dry=new THREE.Color(0xf1dca6),wet=new THREE.Color(0xd8bd84),deep=new THREE.Color(0xc4ab7a),cc=new THREE.Color();
+  RS.forEach(ri=>{const h=beachH(ri);for(let k=0;k<NA;k++){const a=k/NA*Math.PI*2,R=Rk(DC,a)*ri;pos.push(DC.x+Math.cos(a)*R,h,DC.z+Math.sin(a)*R);
+    if(h>.2)cc.copy(dry);else if(h>-.9)cc.copy(dry).lerp(wet,(.2-h)/1.1);else cc.copy(wet).lerp(deep,Math.min(1,(-.9-h)/2));col.push(cc.r,cc.g,cc.b);}});
+  for(let i=0;i<RS.length-1;i++)for(let k=0;k<NA;k++){const a=i*NA+k,b=i*NA+(k+1)%NA,c=a+NA,d=b+NA;idx.push(a,b,c,b,d,c);}
+  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("color",new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();
+  scene.add(new THREE.Mesh(g,new THREE.MeshLambertMaterial({vertexColors:true})));
+  // 물가 하얀 물결 띠
+  const sh=new THREE.Shape(),hole=new THREE.Path();for(let k=0;k<=72;k++){const a=k/72*Math.PI*2,R1=Rk(DC,a)*1.0,R0=Rk(DC,a)*.925;k?sh.lineTo(DC.x+Math.cos(a)*R1,-(DC.z+Math.sin(a)*R1)):sh.moveTo(DC.x+Math.cos(a)*R1,-(DC.z+Math.sin(a)*R1));k?hole.lineTo(DC.x+Math.cos(a)*R0,-(DC.z+Math.sin(a)*R0)):hole.moveTo(DC.x+Math.cos(a)*R0,-(DC.z+Math.sin(a)*R0));}
+  sh.holes.push(hole);const fg=new THREE.ShapeGeometry(sh,1);fg.rotateX(-Math.PI/2);const fm=new THREE.Mesh(fg,foam.material);fm.position.y=SEA_Y+.03;scene.add(fm);}
 // 저스티스 아일랜드 가운데 돌 광장
 cyl(4.8,4.8,.1,0xd8d2c6,JC.x,.9,JC.z,null,28);
 function bridgeDist(Br,x,z){const ax=Br.B.x-Br.A.x,az=Br.B.z-Br.A.z,L2=ax*ax+az*az,t=clamp(((x-Br.A.x)*ax+(z-Br.A.z)*az)/L2,0,1),px=Br.A.x+ax*t,pz=Br.A.z+az*t;return {d:Math.hypot(x-px,z-pz),t,px,pz};}
@@ -601,7 +613,7 @@ function zoneChaeng(g){
 }
 /* ---------- zone 10: 정리했당께 (다비치 아일랜드: 설문 집계 사무소 + 지붕 위 큰 체크리스트 + 막대그래프) ---------- */
 function zoneJeongri(g){
-  cyl(3.8,3.8,.1,0xeceafc,0,.06,.3,g,24);box(1.8,.06,5.6,0xe9dcc0,0,.04,6.6,g);// 다리에서 건물까지 길
+  cyl(3.8,3.8,.1,0xeceafc,0,.06,.3,g,24);box(1.8,.06,4,0xe9dcc0,0,.04,5.1,g);// 다리에서 건물까지 길
   box(4.2,2.2,2.6,0xf6f5ff,0,1.1,-1,g);box(4.5,.2,2.9,0xd9dcfb,0,2.3,-1,g);
   box(.9,1.3,.06,0x4f5aa8,0,.65,.31,g);[-1.45,1.45].forEach(x=>win(g,x,1.15,.31,.75,.6));
   box(2.05,.46,.08,0x4453c9,0,1.78,.31,g);signPlate(g,"정리했당께","#5b6cf0",1.9,1.78,.36);
@@ -615,7 +627,7 @@ function zoneJeongri(g){
   [[-2.5,1.5],[-1.85,1.9]].forEach(([x,z],k)=>{for(let i=0;i<4-k;i++){const s=box(.66,.1,.5,i%2?0xfffdf5:0xffffff,x,.16+i*.1,z,g);s.rotation.y=(i%2?.18:-.1)+k*.3;}});
   // 섬 입구 표지판: 다비치 아일랜드
   const dTex=canvasTex(384,96,(x,w,h)=>{x.fillStyle="#eef0fd";x.fillRect(0,0,w,h);x.strokeStyle="#5b6cf0";x.lineWidth=8;x.strokeRect(4,4,w-8,h-8);x.fillStyle="#3f4bb8";x.font='bold 44px "Jua","IBM Plex Sans KR",sans-serif';x.textAlign="center";x.textBaseline="middle";x.fillText("다비치 아일랜드",w/2,h/2+3);});
-  [-2.32,-.68].forEach(x=>box(.09,1.27,.09,0x8a6440,x,.635,8.6,g));box(1.5,.42,.08,0x8a6440,-1.5,1.05,8.6,g);const ds=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:dTex}));ds.position.set(-1.5,1.05,8.65);g.add(ds);
+  [-2.62,-.98].forEach(x=>box(.09,1.27,.09,0x8a6440,x,.635,6.4,g));box(1.5,.42,.08,0x8a6440,-1.8,1.05,6.4,g);const ds=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.35),new THREE.MeshBasicMaterial({map:dTex}));ds.position.set(-1.8,1.05,6.45);g.add(ds);
   person(-1.2,2.3,g,0x5b6cf0);person(.9,2.5,g,0xffffff);
 }
 const glowTex=canvasTex(64,64,(x,w,h)=>{const r=x.createRadialGradient(32,32,2,32,32,32);r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=r;x.fillRect(0,0,w,h);});
@@ -642,7 +654,7 @@ function clearSpot(x,z){if(rhoAt(x,z)>.88)return false;
 const TREE=[];
 for(let i=0;i<900&&TREE.length<110;i++){const a=rnd()*Math.PI*2,f=.5+Math.sqrt(rnd())*.38,k=coastK(a)*f,x=Math.cos(a)*IA*k,z=Math.sin(a)*IB*k;
   if(!clearSpot(x,z)||TREE.some(([tx,tz])=>Math.hypot(tx-x,tz-z)<1.8))continue;TREE.push([x,z,.75+rnd()*.5]);}
-ISLES.forEach((I,ii)=>{const Br=BRIDGES[ii],front=Math.atan2(Br.A.z-I.z,Br.A.x-I.x),skip=ZONES.filter(z=>rhoI(I,z.x,z.z)<1&&Math.hypot(z.x-I.x,z.z-I.z)>2).map(z=>Math.atan2(z.z-I.z,z.x-I.x)),cnt=[14,36,26][ii];
+ISLES.forEach((I,ii)=>{const Br=BRIDGES[ii],front=Math.atan2(Br.A.z-I.z,Br.A.x-I.x),skip=ZONES.filter(z=>rhoI(I,z.x,z.z)<1&&Math.hypot(z.x-I.x,z.z-I.z)>2).map(z=>Math.atan2(z.z-I.z,z.x-I.x)),cnt=[14,36,0][ii];
   for(let k=0;k<cnt;k++){const a=front+1.05+k*(Math.PI*2-2.1)/(cnt-1);if(skip.some(b=>Math.abs(((a-b+Math.PI*3)%(Math.PI*2))-Math.PI)<.42))continue;const r=Rk(I,a)*.82;if(ii===1&&Math.hypot(I.x+Math.cos(a)*r-JC.sign.position.x,I.z+Math.sin(a)*r-JC.sign.position.z)<4)continue;TREE.push([I.x+Math.cos(a)*r,I.z+Math.sin(a)*r,.75+rnd()*.4]);}});// 작은 섬 둘레 나무
 const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15,0.2,1,6),M(0x7a5536),TREE.length);
 const leaves=new THREE.InstancedMesh(new THREE.ConeGeometry(0.9,2,7),M(0x4f9a4a),TREE.length);
@@ -707,7 +719,7 @@ function stepDolphins(dt){DOLPH.forEach(d=>{
 
 /* ---------- 걷기 세계: 땅 높이와 부딪힘 ---------- */
 function onPath(x,z){for(const p of PATH_PTS){const dx=x-p.x,dz=z-p.z;if(dx*dx+dz*dz<.81)return true;}return false;}
-function onBridge(x,z){if(rhoAt(x,z)<=.84||ISLES.some(I=>rhoI(I,x,z)<=.84))return false;return BRIDGES.some(Br=>{const b=bridgeDist(Br,x,z);return b.d<1.1&&b.t>.02&&b.t<.98;});}
+function onBridge(x,z){if(rhoAt(x,z)<=.84||ISLES.some(I=>rhoI(I,x,z)<=(I===DC?.58:.84)))return false;return BRIDGES.some(Br=>{const b=bridgeDist(Br,x,z);return b.d<1.1&&b.t>.02&&b.t<.98;});}
 function groundAt(x,z){if(Math.hypot(x-HX,z-HZ)<3.2)return 1.02;if(onBridge(x,z))return 1.01;return onPath(x,z)?.96:.9;}
 function walkable(x,z){if(rhoAt(x,z)<=.86||ISLES.some(I=>rhoI(I,x,z)<=.84))return true;return BRIDGES.some(Br=>{const b=bridgeDist(Br,x,z);return b.t>0&&b.t<1&&b.d<=.75;});}
 scene.updateMatrixWorld(true);
@@ -723,7 +735,7 @@ const LOCAL_OBST={
   seoguon:[[-1.3,-.6,1.3],[1.1,-.6,1.3],[0,1.1,.9],[-1.6,2.4,.3]],
   jomok:[[-1.1,-.6,1.4],[1.1,-.6,1.4],...[-1.5,-.5,.5,1.5].map(x=>[x,1.1,.25]),[0,2.2,.4],[1.3,2.6,.3]],
   chaeng:[[-1.1,-.4,1.4],[1.1,-.4,1.4],[-.95,2,.5],[1.2,2.4,.3]],
-  jeongri:[[-1.1,-1,1.4],[1.1,-1,1.4],[2.45,1.7,.75],[-2.2,1.7,.5],[-1.2,2.3,.3],[.9,2.5,.3],[-2.32,8.6,.15],[-.68,8.6,.15]],
+  jeongri:[[-1.1,-1,1.4],[1.1,-1,1.4],[2.45,1.7,.75],[-2.2,1.7,.5],[-1.2,2.3,.3],[.9,2.5,.3],[-2.62,6.4,.15],[-.98,6.4,.15]],
   bell:[[-2,-1.6,1.1,2.6],[-2,1.2,1.15,3.2],[2,-1,1.15,2.2],[2,1.8,1,2.8],[-.95,-2.6,.2],[.95,-.4,.2],[-.95,1.6,.2],[.95,3,.2],[.2,-1.4,.3]]};
 {const v=new THREE.Vector3();ZONES.forEach(z=>LOCAL_OBST[z.p.key].forEach(([x,y,r,tp])=>{v.set(x,0,y);z.group.localToWorld(v);const rt=r>.9?(tp!==undefined?tp:ROOF_TOP[z.p.key]):0;OBST.push({x:v.x,z:v.z,r:r*z.sc,h:r>.9?4.6*z.sc:0,top:rt?.9+rt*z.sc:0});}));}
 PIER.posts.forEach(q=>OBST.push({x:q.x,z:q.z,r:.16,h:0,top:q.y}));[boat,sail].forEach(b=>OBST.push({x:b.position.x,z:b.position.z,r:1.25,h:0,top:.08,sr:1.1}));
@@ -735,20 +747,20 @@ function collide(p,r,y,fly){y=y||0;
   {const dx=p.x-2,dz=p.z+12,d=Math.hypot(dx,dz),lim=80;if(d>lim){p.x=2+dx/d*lim;p.z=-12+dz/d*lim;}}return;// 바다로도 나갈 수 있음(헤엄·날기), 너무 멀리는 못 감
   if(!walkable(p.x,p.z)){const rh=rhoAt(p.x,p.z),c=[[p.x*.86/rh,p.z*.86/rh]];ISLES.forEach(I=>{const dx=p.x-I.x,dz=p.z-I.z,dd=Math.hypot(dx,dz)||1,rr=Rk(I,Math.atan2(dz,dx))*.84;c.push([I.x+dx/dd*Math.min(dd,rr),I.z+dz/dd*Math.min(dd,rr)]);});BRIDGES.forEach(Br=>{const b=bridgeDist(Br,p.x,p.z);if(b.t>0&&b.t<1){const k=.75/(b.d||1);c.push([b.px+(p.x-b.px)*k,b.pz+(p.z-b.pz)*k]);}});let best=c[0],bd=1e9;c.forEach(q=>{const d=Math.hypot(q[0]-p.x,q[1]-p.z);if(d<bd){bd=d;best=q;}});p.x=best[0];p.z=best[1];}
 }
-function landY(x,z){if(onBridge(x,z))return 1.01;if(onPier(x,z))return PIER.top;const r=rhoAt(x,z);if(r<=.93)return groundAt(x,z);for(const I of ISLES){const ri=rhoI(I,x,z);if(ri<=.9)return groundAt(x,z);if(ri<=1)return .35;}return r<=1?.35:null;}// 바다면 null
+function landY(x,z){if(onBridge(x,z))return 1.01;if(onPier(x,z))return PIER.top;const r=rhoAt(x,z);if(r<=.93)return groundAt(x,z);for(const I of ISLES){const ri=rhoI(I,x,z);if(I===DC){if(ri<=.6)return groundAt(x,z);if(ri<1.47){const h=beachH(ri);return h>SEA_Y-.5?h:null;}continue;}if(ri<=.9)return groundAt(x,z);if(ri<=1)return .35;}return r<=1?.35:null;}// 다비치는 얕은 물까지 걸어 들어갈 수 있음// 바다면 null
 function roofAt(x,z,y){let b=-1e9;for(const o of OBST){if(!o.top||y<o.top-.45||o.top<=b)continue;const sr=o.sr||o.r*.9;if((x-o.x)*(x-o.x)+(z-o.z)*(z-o.z)<sr*sr)b=o.top;}for(const q of RECTS)if(q.top&&y>=q.top-.45&&q.top>b&&x>q.x0&&x<q.x1&&z>q.z0&&z<q.z1)b=q.top;return b;}
 function camBlocked(x,y,z){for(const b of RECTS)if(y<b.h&&x>b.x0-.3&&x<b.x1+.3&&z>b.z0-.3&&z<b.z1+.3)return true;for(const o of OBST)if(y<o.h&&Math.hypot(x-o.x,z-o.z)<o.r+.3)return true;return false;}
 /* ---------- 다비치 아일랜드 해변: 파스텔 줄무늬 파라솔 + 선베드 ---------- */
 const PARASOL=[];
 {const front=Math.atan2(DB.B.z-DC.z,DB.B.x-DC.x),cols=[[0xff8fb3,0xfff7fa],[0x6fbaf5,0xf6fbff],[0xffcc3d,0xfffbea],[0x5fcf92,0xf3fff8],[0xa98bf5,0xfaf7ff]];
   const pole=[],top=[],beds=[];
-  [-1.25,-.62,0,.62,1.25].forEach((da,k)=>{const a=front+Math.PI+da,R=Rk(DC,a)*.955,x=DC.x+Math.cos(a)*R,z=DC.z+Math.sin(a)*R,tx=-Math.sin(a),tz=Math.cos(a);
-    PARASOL.push({x,z,a});pole.push([B,0xf4f1ea,T(x,.35+.9,z,.07,1.8,.07)]);
+  [-1.25,-.62,0,.62,1.25].forEach((da,k)=>{const a=front+Math.PI+da,R=Rk(DC,a)*.79,x=DC.x+Math.cos(a)*R,z=DC.z+Math.sin(a)*R,tx=-Math.sin(a),tz=Math.cos(a);
+    const by=beachH(.79);PARASOL.push({x,z,a});pole.push([B,0xf4f1ea,T(x,by+.9,z,.07,1.8,.07)]);
     const cone=new THREE.ConeGeometry(1.15,.5,10).toNonIndexed(),c=cols[k],n=cone.attributes.position.count,col=new Float32Array(n*3),ca=new THREE.Color(c[0]),cb=new THREE.Color(c[1]);
     for(let i=0;i<n;i++){const tri=(i/3|0),cc=(Math.floor(Math.atan2(cone.attributes.position.getZ(tri*3)+cone.attributes.position.getZ(tri*3+1)+cone.attributes.position.getZ(tri*3+2),cone.attributes.position.getX(tri*3)+cone.attributes.position.getX(tri*3+1)+cone.attributes.position.getX(tri*3+2))/(Math.PI/5)+10)%2)?cb:ca;col[i*3]=cc.r;col[i*3+1]=cc.g;col[i*3+2]=cc.b;}cone.setAttribute("color",new THREE.BufferAttribute(col,3));cone.deleteAttribute("uv");
-    const m=new THREE.Mesh(cone,HMAT);m.position.set(x,.35+1.95,z);m.rotation.z=.12*Math.cos(a);m.rotation.x=-.12*Math.sin(a);scene.add(m);
+    const m=new THREE.Mesh(cone,HMAT);m.position.set(x,by+1.95,z);m.rotation.z=.12*Math.cos(a);m.rotation.x=-.12*Math.sin(a);scene.add(m);
     const bx=x+tx*1.05,bz=z+tz*1.05,yaw=Math.atan2(Math.cos(a),Math.sin(a));// 선베드: 바다를 보고 누움
-    const M4=new THREE.Matrix4().compose(new THREE.Vector3(bx,.35,bz),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),yaw),new THREE.Vector3(1,1,1));
+    const M4=new THREE.Matrix4().compose(new THREE.Vector3(bx,by,bz),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),yaw),new THREE.Vector3(1,1,1));
     [[0,.22,0,.6,.08,1.3,c[0]],[0,.38,-.5,.6,.08,.42,c[0]],[-.25,.1,.5,.06,.2,.06,0xb08350],[.25,.1,.5,.06,.2,.06,0xb08350],[-.25,.1,-.5,.06,.2,.06,0xb08350],[.25,.1,-.5,.06,.2,.06,0xb08350]].forEach(([lx,ly,lz,w,h,d,cc])=>beds.push([B,cc,M4.clone().multiply(T(lx,ly,lz,w,h,d))]));
     PARASOL[k].bed=[bx,bz];});
   scene.add(new THREE.Mesh(merged(pole),HMAT),new THREE.Mesh(merged(beds),HMAT));}
@@ -831,7 +843,7 @@ function makeCat(L){const g=new THREE.Group(),eye=L.eye||0x2a2a2a,ear=L.ear||L.c
   const bub=new THREE.Sprite(new THREE.SpriteMaterial({map:meowTex,transparent:true,depthWrite:false}));bub.scale.set(.7,.35,1);bub.position.y=1.05;bub.visible=false;g.add(bub);
   const sh=new THREE.Mesh(SHADOW_G,SHADOW_M);sh.rotation.x=-Math.PI/2;sh.position.y=.02;sh.scale.setScalar(.8);g.add(sh);
   scene.add(g);return {g,core,legA,legB,tail,bub};}
-function catSpotOk(x,z){if(rhoI(DC,x,z)>.72)return false;for(const o of OBST)if((x-o.x)*(x-o.x)+(z-o.z)*(z-o.z)<(o.r+.55)*(o.r+.55))return false;return true;}
+function catSpotOk(x,z){if(rhoI(DC,x,z)>.6)return false;for(const o of OBST)if((x-o.x)*(x-o.x)+(z-o.z)*(z-o.z)<(o.r+.55)*(o.r+.55))return false;return true;}
 function catSpot(fx,fz){for(let i=0;i<40;i++){const a=rnd()*Math.PI*2,r=Math.sqrt(rnd())*DC.r*.7,x=DC.x+Math.cos(a)*r,z=DC.z+Math.sin(a)*r;if(!catSpotOk(x,z))continue;
     if(fx!==undefined){let ok=true;for(let k=1;k<6;k++){const u=k/6;if(!catSpotOk(fx+(x-fx)*u,fz+(z-fz)*u)){ok=false;break;}}if(!ok)continue;}return [x,z];}return null;}
 const CATS=CAT_LOOKS.map((L,i)=>{const m=makeCat(L),p=catSpot()||[DC.x+2,DC.z+2];return Object.assign(m,{x:p[0],z:p[1],yaw:rnd()*6,mode:i%2?"sit":"walk",t:2+rnd()*6,ph:rnd()*6,met:false,bubT:0,tx:p[0],tz:p[1]});});
@@ -1083,7 +1095,7 @@ function jumpPress(){if(!walking||talkNpc>=0||!$("guide").hidden)return;
 function land(){P.air=P.fly=false;player.air=player.fly=false;if(P.swim){P.swim=false;setDiver(false);}P.vy=0;player.land=1;jumpLabel();}
 function stepJump(dt){const hold=jumpHeld||keys.Space,fl=floorAt(P.x,P.z,P.y);
   if(P.swim){if(fl!==null){P.y=fl;land();return;}// 해변에 닿으면 물 밖으로
-    P.vy+=((hold?2.4:-.55)-P.vy)*Math.min(1,dt*3);P.y=clamp(P.y+P.vy*dt,SEABED+.05,SEA_Y-.75);return;}
+    P.vy+=((hold?2.4:-.55)-P.vy)*Math.min(1,dt*3);{const ri=rhoI(DC,P.x,P.z),fl=ri<1.47?beachH(ri)+.2:SEABED+.05;P.y=clamp(P.y+P.vy*dt,Math.min(fl,SEA_Y-.75),SEA_Y-.75);}return;}// 해수욕장 바닥 아래로는 안 내려감
   if(P.fly){P.vy+=((hold?4.6:-1.7)-P.vy)*Math.min(1,dt*4);P.y=Math.min(24,P.y+P.vy*dt);if(fl===null){if(P.y<=SEA_Y)enterWater();}else if(P.y<=fl){P.y=fl;land();}return;}
   if(P.air||fl===null){P.air=true;player.air=true;P.vy-=20*dt;P.y+=P.vy*dt;if(fl===null){if(P.y<=SEA_Y)enterWater();}else if(P.y<=fl){P.y=fl;land();}return;}
   if(fl<P.y-.25){P.air=true;player.air=true;P.vy=0;}else P.y=fl;}
@@ -1233,7 +1245,7 @@ function frame(t){
   if(INTRO.on)stepIntro(dt);
   else if(walking){updatePlayer(dt);updateWalkCam(dt);}
   else{const kx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0),ky=(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);
-    if((kx||ky)&&focus<0){const sp=dt*innerHeight*.5;panBy(kx*sp,-ky*sp);moving=true;}// 하늘에서 WASD·화살표로 옮기기
+    if((kx||ky)&&focus<0){const sp=dt*innerHeight*.5;panBy(-kx*sp,-ky*sp);moving=true;}// 하늘에서 WASD·화살표로 옮기기
     const k=dragging||pointers.size>1?0.35:0.09;
     for(const key of ["tx","ty","tz","dist","az","el","ox","oy"]){const d=goal[key]-rig[key];if(Math.abs(d)>1e-4){rig[key]+=d*k;moving=true;}else rig[key]=goal[key];}
     placeCamera();}
