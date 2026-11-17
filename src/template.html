@@ -1187,7 +1187,7 @@ cv.addEventListener("pointermove",e=>{if(!pointers.has(e.pointerId))return;point
   if(!dragging)return;
   if(walking){WC.yaw-=(e.clientX-down.lx)*.008;WC.pitch=clamp(WC.pitch+(e.clientY-down.ly)*.005,.06,1.1);down.lx=e.clientX;down.ly=e.clientY;}
   else if(down.pan){panBy(e.clientX-down.lx,e.clientY-down.ly);down.lx=e.clientX;down.ly=e.clientY;}
-  else{goal.az=down.az-dx*0.006;goal.el=clamp(down.el+dy*0.004,0.22,1.25);startTween(true);}});
+  else{goal.az=down.az+dx*0.006;goal.el=clamp(down.el+dy*0.004,0.22,1.25);startTween(true);}});
 function up(e){pointers.delete(e.pointerId);$("stage").classList.remove("dragging");
   const tap=down&&!dragging&&performance.now()-down.t<400;
   if(tap&&!walking&&e.pointerType!=="mouse"){const now=performance.now();if(lastTap&&now-lastTap.t<330&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<36&&focus<0){lastTap=null;flyTo(e.clientX,e.clientY);down=null;dragging=false;return;}lastTap={t:now,x:e.clientX,y:e.clientY};}// 폰: 두 번 톡 = 그 자리로
