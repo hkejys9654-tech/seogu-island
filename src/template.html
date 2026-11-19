@@ -415,8 +415,70 @@ function stoneBridge(Br){const [g,len]=bridgeGroup(Br),L=len+1.6,W=2.3,n=Math.ma
   s.lineTo(-L/2,yb);const geo=new THREE.ExtrudeGeometry(s,{depth:W,bevelEnabled:false,curveSegments:10});geo.rotateY(Math.PI/2);geo.translate(-W/2,0,0);g.add(new THREE.Mesh(geo,M(STONE)));
   box(W-.5,.06,L,0x9e978b,0,.97,0,g);
   [-1,1].forEach(sd=>{const x=sd*(W/2-.15);box(.3,.42,L,0xa9a295,x,1.15,0,g);for(let k=-L/2+.3;k<L/2;k+=.9)box(.32,.26,.42,0xa9a295,x,1.49,k,g);
-    [-L/2+.35,L/2-.35].forEach(zz=>{box(.7,2.1,.7,0xa29b8e,sd*(W/2+.2),1.05,zz,g);roof(1,.8,1,0x7a6f62,sd*(W/2+.2),2.5,zz,g);});});}
-BRIDGES.forEach(Br=>Br.stone?stoneBridge(Br):woodBridge(Br));
+    [-L/2+.35,L/2-.35].forEach(zz=>{box(.7,2.1,.7,0xa29b8e,sd*(W/2+.2),1.05,zz,g);roof(1,.8,1,0x7a6f62,sd*(W/2+.2),2.5,zz,g);});});return [g,L];}
+/* ---------- 세계의 유명한 다리: 장식은 다리마다 한 덩어리로 합쳐 가볍게 그림(걷는 높이는 모두 같음) ---------- */
+function TR(x,y,z,sx,sy,sz,rx,ry,rz){return new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(rx||0,ry||0,rz||0)),new THREE.Vector3(sx,sy,sz));}
+function bx(P,c,x,y,z,w,h,d){P.push([B,c,T(x,y,z,w,h,d)]);}
+function seg(P,a,b,th,c){const d=new THREE.Vector3(b[0]-a[0],b[1]-a[1],b[2]-a[2]),L=d.length();if(L<1e-4)return;P.push([B,c,new THREE.Matrix4().compose(new THREE.Vector3((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2),new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1),d.normalize()),new THREE.Vector3(th,th,L))]);}
+const CONE4=new THREE.ConeGeometry(.75,1,4),SPH=new THREE.SphereGeometry(.5,8,6);
+function finish(g,P){g.add(new THREE.Mesh(merged(P),HMAT));}
+const PLAQUES=[];
+function plaque(g,L,text){const tx=canvasTex(320,80,(x,w,h)=>{x.fillStyle="#fffaf0";x.fillRect(0,0,w,h);x.strokeStyle="#8a6440";x.lineWidth=6;x.strokeRect(3,3,w-6,h-6);x.fillStyle="#4a3a2a";let s=34;do{x.font=`bold ${s}px "Jua","IBM Plex Sans KR",sans-serif`;s-=2;}while(x.measureText(text).width>w-28);x.textAlign="center";x.textBaseline="middle";x.fillText(text,w/2,h/2+2);});
+  const z=-L/2-.7,x=1.75;box(.07,1,.07,0x8a6440,x,1.4,z,g);box(1.04,.3,.05,0x8a6440,x,1.95,z,g);const m=new THREE.Mesh(new THREE.PlaneGeometry(.98,.245),new THREE.MeshBasicMaterial({map:tx}));m.position.set(x,1.95,z-.03);m.rotation.y=Math.PI;g.add(m);PLAQUES.push([g,x,z]);}
+/* 영국 런던 타워브리지: 고딕 탑 두 개 + 위쪽 연결통로 + 파란 현수 사슬 */
+function towerBridge(Br){const [g,len]=bridgeGroup(Br),L=len+1.2,P=[],ST=0xdccba3,SL=0x4b5563,BL=0x5d93c9;
+  bx(P,0x8a939c,0,.93,0,2.2,.16,L);[-1,1].forEach(s=>{bx(P,BL,s*1.08,1.38,0,.06,.06,L);for(let z=-L/2+.2;z<L/2;z+=.7)bx(P,(Math.round(z/.7)%2)?BL:0xffffff,s*1.08,1.16,z,.06,.44,.06);});
+  [-1,1].forEach(k=>{const zt=k*L*.2;bx(P,0xb9ab8c,0,-.75,zt,4.9,1.3,2);
+    [-1,1].forEach(sd=>{bx(P,ST,sd*1.75,1.45,zt,1.1,4.1,1.3);[[-.45,-.55],[.45,-.55],[-.45,.55],[.45,.55]].forEach(([a,b])=>bx(P,ST,sd*1.75+a,3.85,zt+b,.26,.9,.26));P.push([CONE4,SL,TR(sd*1.75,4.35,zt,1.3,1.2,1.5,0,Math.PI/4,0)]);
+      seg(P,[sd*1.75,3.1,zt],[sd*1.15,1.35,k*L/2],.13,BL);});
+    bx(P,ST,0,3.1,zt,2.4,.75,1.1);bx(P,SL,0,3.55,zt,2.5,.15,1.2);});
+  const span=L*.4-1.3;[-.5,.5].forEach(x=>{bx(P,BL,x,3.55,0,.5,.45,span);bx(P,0xffffff,x,3.3,0,.52,.06,span);});
+  finish(g,P);plaque(g,L,"타워브리지 · 영국");}
+/* 부산 광안대교: 하얀 현수교, 밤에는 케이블 불빛 */
+const BRIDGE_LIGHT=new THREE.MeshBasicMaterial({vertexColors:true,color:0xd5dbe2});
+function gwangan(Br){const [g,len]=bridgeGroup(Br),L=len+1.2,P=[],LP=[],WH=0xf4f6f8,zt=L*.24,top=3.95,mid=1.65;
+  bx(P,0xe6e9ed,0,.93,0,2.3,.18,L);[-1,1].forEach(s=>{bx(P,0xcfd5dc,s*1.12,.78,0,.12,.32,L);bx(P,0xb0b8c1,s*1.12,1.32,0,.04,.04,L);for(let z=-L/2+.2;z<L/2;z+=.8)bx(P,0xb0b8c1,s*1.12,1.14,z,.04,.36,.04);});
+  [-1,1].forEach(k=>{const z=k*zt;bx(P,0xc9ced4,0,-.85,z,3.6,1,1.3);[-1,1].forEach(sd=>bx(P,WH,sd*1.35,1.7,z,.3,4.6,.38));bx(P,WH,0,3.85,z,3,.3,.38);bx(P,WH,0,2.65,z,3,.2,.32);});
+  const cy=z=>{const a=Math.abs(z);return a>zt?top-(top-1.25)*(a-zt)/(L/2-zt):mid+(top-mid)*(z/zt)*(z/zt);};
+  [-1,1].forEach(sd=>{const x=sd*1.35;let prev=null;for(let z=-L/2;z<=L/2+1e-6;z+=L/48){const p=[x,cy(z),z];if(prev)seg(P,prev,p,.07,0xdfe4ea);prev=p;}
+    for(let z=-L/2+.6;z<L/2;z+=.7){const y=cy(z);if(y>1.35)seg(P,[x,y,z],[sd*1.12,1.05,z],.03,0xcfd5dc);LP.push([SPH,0xffffff,T(x,y+.06,z,.16)]);}});
+  finish(g,P);g.add(new THREE.Mesh(merged(LP),BRIDGE_LIGHT));plaque(g,L,"광안대교 · 한국");}
+/* 호주 시드니 하버브리지: 다리 위로 넘어가는 큰 철제 아치 + 양 끝 화강암 탑 */
+function harbour(Br){const [g,len]=bridgeGroup(Br),L=len+1.2,P=[],S=L-1.6,ST=0x8f969d,yb=z=>.25+4.05*(1-(2*z/S)**2),yt=z=>yb(z)+.45+.55*(2*z/S)**2;
+  bx(P,0x7b8189,0,.93,0,2.4,.18,L);[-1,1].forEach(s=>{bx(P,0x9aa1a8,s*1.15,1.3,0,.05,.05,L);for(let z=-L/2+.2;z<L/2;z+=.8)bx(P,0x9aa1a8,s*1.15,1.12,z,.05,.38,.05);});
+  [-1,1].forEach(k=>{const z=k*(L/2-.55);[-1,1].forEach(sd=>{bx(P,0xd8cba9,sd*1.8,1.5,z,1,4.2,1.1);bx(P,0xc9bb96,sd*1.8,3.7,z,1.15,.2,1.25);});});
+  const n=18;[-1,1].forEach(sd=>{const x=sd*1.22;for(let i=0;i<n;i++){const z0=-S/2+S*i/n,z1=-S/2+S*(i+1)/n;seg(P,[x,yb(z0),z0],[x,yb(z1),z1],.12,ST);seg(P,[x,yt(z0),z0],[x,yt(z1),z1],.12,ST);seg(P,[x,yb(z0),z0],[x,yt(z0),z0],.06,ST);seg(P,[x,yb(z0),z0],[x,yt(z1),z1],.05,ST);
+      if(yb(z0)>1.25)seg(P,[x,yb(z0),z0],[sd*1.15,1.02,z0],.035,0x9aa1a8);}});
+  for(let i=1;i<n;i++){const z=-S/2+S*i/n;if(yb(z)>2.7)bx(P,ST,0,yt(z)-.05,z,2.5,.09,.09);}
+  finish(g,P);plaque(g,L,"하버브리지 · 호주");}
+/* 일본 닛코 신쿄: 빨간 칠을 한 아치 다리, 난간 기둥에 금빛 장식 */
+function shinkyo(Br){const [g,len]=bridgeGroup(Br),L=len+1.2,P=[],RD=0xc8342b,GD=0xd4a72c;
+  bx(P,RD,0,.93,0,2.05,.16,L);bx(P,0x2b2b2b,0,.84,0,2.1,.05,L);
+  [-1,1].forEach(s=>{const x=s*.98;bx(P,RD,x,1.44,0,.08,.08,L);bx(P,RD,x,1.2,0,.05,.05,L);let i=0;for(let z=-L/2+.15;z<=L/2;z+=.75,i++){bx(P,RD,x,1.25,z,.11,.52,.11);if(i%2===0)P.push([SPH,GD,T(x,1.57,z,.17)]);}
+    let prev=null;const A=L*.46,ya=z=>.15+.62*(1-(z/A)**2);for(let z=-A;z<=A+1e-6;z+=A/10){const p=[s*.9,ya(z),z];if(prev)seg(P,prev,p,.16,RD);prev=p;if(Math.abs(z)<A-.1)seg(P,[s*.9,ya(z),z],[s*.9,.85,z],.07,RD);}});
+  [-1,1].forEach(k=>{const z=k*L*.46;bx(P,0x8e8a80,0,-.45,z,2.5,1.4,1.3);bx(P,0x7c786f,0,.28,z,2.3,.1,1.1);});
+  finish(g,P);plaque(g,L,"신쿄 · 일본");}
+/* 이탈리아 피렌체 폰테 베키오: 아치 세 개짜리 돌다리 위에 알록달록한 작은 가게 집들 */
+function ponteVecchio(Br){const [g,len]=bridgeGroup(Br),L=len+1.4,W=3.6,P=[],n=3,span=L/n,r=span*.42,yb=-.75,yc=-.35,STN=0xc9a46a;
+  const s=new THREE.Shape();s.moveTo(-L/2,.92);s.lineTo(L/2,.92);s.lineTo(L/2,yb);
+  for(let k=n-1;k>=0;k--){const zc=-L/2+span*(k+.5);s.lineTo(zc+r,yb);s.lineTo(zc+r,yc);s.absarc(zc,yc,r,0,Math.PI,false);s.lineTo(zc-r,yb);}
+  s.lineTo(-L/2,yb);const geo=new THREE.ExtrudeGeometry(s,{depth:W,bevelEnabled:false,curveSegments:8});geo.rotateY(Math.PI/2);geo.translate(-W/2,0,0);g.add(new THREE.Mesh(geo,M(STN)));
+  bx(P,0xb99460,0,.97,0,2.2,.06,L);
+  const COL=[0xf2c27b,0xe8955a,0xf5d98b,0xd9826b,0xf0b98c,0xe7c9a0,0xf4a96a];let k=0;
+  [-1,1].forEach(sd=>{for(let z=-L*.4;z<L*.4-.5;z+=1.05){if(Math.abs(z+.5)<1.3)continue;const h=1.05+((k*37)%5)*.14,w=.95,c=COL[k%COL.length],out=(k%3===0)?.28:0,x=sd*(1.12+w/2+out);k++;
+    bx(P,c,x,.95+h/2,z+.5,w,h,.98);bx(P,0xa9583f,x,.95+h+.06,z+.5,w+.12,.1,1.06);bx(P,0x6b4a35,sd*1.11,1.35,z+.5,.03,.5,.32);bx(P,0x3f4a55,x+sd*(w/2+.01),.95+h*.65,z+.5,.02,.24,.3);
+    if(out)[-.3,.3].forEach(dz=>seg(P,[sd*(1.12+out+.15),.55,z+.5+dz],[sd*(1.12+out+.75),.95,z+.5+dz],.07,0x6b4a35));}});
+  bx(P,0xe2b77d,-(1.12+.5),2.95,0,1,.55,L*.78);for(let z=-L*.37;z<L*.37;z+=.9)bx(P,0x6b5040,-1.11,2.95,z,.02,.18,.18);
+  [-1,1].forEach(sd=>bx(P,STN,sd*1.3,1.15,-.5,.25,.4,2.4));
+  finish(g,P);plaque(g,L,"폰테 베키오 · 이탈리아");}
+/* 체코 프라하 카를교: 돌다리 난간의 검은 석상들 + 들머리의 고딕 다리탑 */
+function charles(Br){const [g,L]=stoneBridge(Br),P=[],DK=0x3c3a36,ST=0x6f685f;
+  let i=0;[-1,1].forEach(sd=>{for(let z=-L/2+2.4;z<L/2-1.5;z+=3,i++){const x=sd*1;bx(P,0x8f887c,x,1.78,z,.44,.32,.44);bx(P,DK,x,2.25,z,.26,.62,.2);bx(P,DK,x,2.64,z,.17,.17,.17);bx(P,DK,x+sd*.02,2.38,z+.13,.3,.08,.08);
+    if(i%3===1)P.push([new THREE.TorusGeometry(.13,.02,4,14),0xd4a72c,TR(x,2.78,z,1,1,1,Math.PI/2,0,0)]);}});
+  const zt=-L/2+1.4;[-1,1].forEach(sd=>{bx(P,ST,sd*1.75,2.2,zt,1,2.6,1.3);[[-.45],[.45]].forEach(([a])=>bx(P,ST,sd*1.75+a,4.9,zt,.22,.7,.22));});
+  bx(P,ST,0,4.05,zt,4.5,1.7,1.5);bx(P,0x5d574f,0,3.18,zt,2.3,.1,1.52);P.push([CONE4,0x2f2b28,TR(0,5.6,zt,2.6,1.5,1.9,0,Math.PI/4,0)]);[-1.6,1.6].forEach(x=>P.push([CONE4,0x2f2b28,TR(x,5.45,zt,.4,.9,.4,0,Math.PI/4,0)]));
+  finish(g,P);plaque(g,L,"카를교 · 체코");}
+
 /* ---------- 나루터: 섬 남동쪽 해변에서 바다로 뻗은 나무 부두 ---------- */
 const PIER=(()=>{const A={x:20.6,z:12.3},dx=.859,dz=.511,L=11.5,B={x:A.x+dx*L,z:A.z+dz*L};return {A,B,dx,dz,L,sx:dz,sz:-dx,top:.7};})();
 function pierDist(x,z){const Q=PIER,ax=x-Q.A.x,az=z-Q.A.z,t=(ax*Q.dx+az*Q.dz)/Q.L,s=ax*Q.sx+az*Q.sz;return {t,s};}
@@ -711,6 +773,8 @@ ZONES.forEach((z,i)=>{const g=new THREE.Group();g.position.set(z.x,0.9,z.z);g.ro
   const ring=new THREE.Mesh(new THREE.RingGeometry(4.6,4.9,40),new THREE.MeshBasicMaterial({color:new THREE.Color(z.p.color),transparent:true,opacity:0}));ring.rotation.x=-Math.PI/2;ring.position.set(z.x,0.97,z.z);if(z.p.key==="jomok")ring.visible=false;scene.add(ring);z.ring=ring;
 });
 
+/* 다리 그리기(블록 재질 HMAT 이 준비된 뒤) */
+[towerBridge,charles,gwangan,harbour,shinkyo,ponteVecchio].forEach((f,i)=>f(BRIDGES[i]));
 /* ---------- trees (instanced), 오름 & scenery ---------- */
 let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 const OREUM=[[-25,1.5,3],[-14,-8.6,3.1],[5.5,9.4,3.4],[24.3,-5,2.8]];// 제주 오름 같은 낮은 언덕
@@ -816,7 +880,7 @@ const LOCAL_OBST={
   bell:[[-2,-1.6,1.1,2.6],[-2,1.2,1.15,3.2],[2,-1,1.15,2.2],[2,1.8,1,2.8],[-.95,-2.6,.2],[.95,-.4,.2],[-.95,1.6,.2],[.95,3,.2],[.2,-1.4,.3]]};
 {const v=new THREE.Vector3();ZONES.forEach(z=>LOCAL_OBST[z.p.key].forEach(([x,y,r,tp])=>{v.set(x,0,y);z.group.localToWorld(v);const rt=r>.9?(tp!==undefined?tp:ROOF_TOP[z.p.key]):0;OBST.push({x:v.x,z:v.z,r:r*z.sc,h:r>.9?4.6*z.sc:0,top:rt?.9+rt*z.sc:0});}));}
 PIER.posts.forEach(q=>OBST.push({x:q.x,z:q.z,r:.16,h:0,top:q.y}));[boat,sail].forEach(b=>OBST.push({x:b.position.x,z:b.position.z,r:1.25,h:0,top:.08,sr:1.1}));
-LAMP_AT.forEach(([x,z])=>OBST.push({x,z,r:.15,h:0}));OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0},{x:JC.x,z:JC.z,r:1.25,h:4.3},...[-1.33,1.33].map(lx=>({x:JC.sign.position.x+Math.cos(JRY)*lx,z:JC.sign.position.z-Math.sin(JRY)*lx,r:.18,h:0})));OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1,top:.9+r*.62,sr:r*.4}));ISIGN_POSTS.forEach(q=>OBST.push({x:q.x,z:q.z,r:.15,h:0}));OBST.push({x:HX,z:HZ-1.6,r:1.25,h:7,top:7.6});TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
+LAMP_AT.forEach(([x,z])=>OBST.push({x,z,r:.15,h:0}));OBST.push({x:HX+3.9,z:HZ-.2,r:.15,h:0},{x:JC.x,z:JC.z,r:1.25,h:4.3},...[-1.33,1.33].map(lx=>({x:JC.sign.position.x+Math.cos(JRY)*lx,z:JC.sign.position.z-Math.sin(JRY)*lx,r:.18,h:0})));OREUM.forEach(([x,z,r])=>OBST.push({x,z,r:r*.92,h:r*.62+1,top:.9+r*.62,sr:r*.4}));ISIGN_POSTS.forEach(q=>OBST.push({x:q.x,z:q.z,r:.15,h:0}));{const v=new THREE.Vector3();PLAQUES.forEach(([g,x,z])=>{v.set(x,0,z);g.localToWorld(v);OBST.push({x:v.x,z:v.z,r:.15,h:0});});}OBST.push({x:HX,z:HZ-1.6,r:1.25,h:7,top:7.6});TREE.forEach(([x,z,s])=>OBST.push({x,z,r:.55*s,h:0}));
 function collide(p,r,y,fly){y=y||0;
   for(const o of OBST){if(o.top?y>=o.top-.05:y>(o.h>0?.9+o.h:o.r<=.35?1.9:4.6))continue;const dx=p.x-o.x,dz=p.z-o.z,d=Math.hypot(dx,dz),m=o.r+r;if(d<m&&d>1e-4){p.x=o.x+dx/d*m;p.z=o.z+dz/d*m;}}
   for(const b of RECTS){if(y>=(b.top||.9+b.h)-.05)continue;const cx=clamp(p.x,b.x0,b.x1),cz=clamp(p.z,b.z0,b.z1),dx=p.x-cx,dz=p.z-cz,d=Math.hypot(dx,dz);
@@ -1339,6 +1403,7 @@ function frame(t){
   // gentle ambient life (walkers, clouds, bells, boat) — skipped for reduced motion
   if(!reduce){updateWalkers(dt);clouds.forEach(c=>{c.position.x+=0.01;if(c.position.x>90)c.position.x=-90;});boat.position.y=-0.3+Math.sin(s*1.4)*0.08;boat.rotation.z=Math.sin(s*1.1)*0.04;sail.position.y=-0.3+Math.sin(s*1.25+1)*0.08;sail.rotation.x=Math.sin(s*.95+.5)*0.035;stepGulls(dt,s);
     zoneBy.bell.group.userData.glows.forEach((h,i)=>{h.material.opacity=0.35+0.45*(0.5+0.5*Math.sin(s*3+i));});zoneBy.seoguon.group.userData.ring.rotation.z=s*.6;JC.statue.userData.beam.rotation.z=Math.sin(s*.9)*.06;{const g=zoneBy.bus.group.userData,b=g.bus;g.busA+=dt*.32;b.position.x=Math.sin(g.busA)*4.4;b.position.z=Math.cos(g.busA)*4.4;b.rotation.y=g.busA+Math.PI/2;}const sp=zoneBy.family.group.userData.spin;if(sp)sp.rotation.y=s*0.8;foam.material.opacity=0.4+0.15*Math.sin(s*1.3);}
+  {const nt=SKY.cur.night||0;if(nt>.3)BRIDGE_LIGHT.color.setHSL((s*.04)%1,.85,.45+.2*nt);else BRIDGE_LIGHT.color.setHex(0xd5dbe2);}
   if(!reduce){seaU.value=s;stepDolphins(dt);stepJumpFish(dt);stepCats(dt,s);}
   {const under=camera.position.y<SEA_Y-.05;if(under!==wasUnder){wasUnder=under;scene.fog=under?waterFog:airFog;renderer.setClearColor(under?waterFog.color:0x000000,under?1:0);eco.visible=under;sndUnder(under);}if(under)stepEco(reduce?0:s);}
   updateNpcs(dt,s);animHaeon(player,dt,s);NPCS.forEach(n=>animHaeon(n.h,dt,s));walkers.forEach(w=>animHaeon(w.h,dt,s));
